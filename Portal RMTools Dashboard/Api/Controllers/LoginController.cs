@@ -65,25 +65,33 @@ namespace Api.Controllers
             ServiceResponseSingle<LoginRes> res = new ServiceResponseSingle<LoginRes>();
             var cookies = Request.Cookies;
             string refreshToken = cookies["RefreshToken"];
-
-            var Token = _refreshToken.DoRefreshToken(refreshToken);
-
-            if (Token.token == "" || Token.token == null)
+            if(refreshToken != null)
             {
-                res.Code = -1;
-                res.Message = Token.error;
-                return new OkObjectResult(res);
+                var Token = _refreshToken.DoRefreshToken(refreshToken);
+
+                if (Token.token == "" || Token.token == null)
+                {
+                    res.Code = -1;
+                    res.Message = Token.error;
+                    return new OkObjectResult(res);
+                }
+
+                var logRes = new LoginRes()
+                {
+                    token = Token.token,
+                    refreshToken = Token.refreshToken
+                };
+
+                res.Code = 1;
+                res.Message = "success";
+                res.Data = logRes;
+
             }
-
-            var logRes = new LoginRes()
+            else
             {
-                token = Token.token,
-                refreshToken = Token.refreshToken
-            };
-
-            res.Code = 1;
-            res.Message = "success";
-            res.Data = logRes;
+                res.Code = 1;
+                res.Message = "Refresh token not found";
+            }
 
             return new OkObjectResult(res);
 

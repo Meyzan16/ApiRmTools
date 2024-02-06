@@ -139,7 +139,7 @@ namespace Api.Services
                 //add cookies
                 // Return JWT and refresh token as cookies
                 _cookies.SetTokenCookies("Token", jwt, DateTime.UtcNow.AddMinutes(double.Parse(GetConfig.AppSetting["TokenLifetime"])));
-                _cookies.SetTokenCookies("RefreshToken", refresh_token, DateTime.UtcNow.AddHours(double.Parse(GetConfig.AppSetting["RefreshLifetime"])));
+                _cookies.SetTokenCookies("RefreshToken", refresh_token, DateTime.UtcNow.AddDays(double.Parse(GetConfig.AppSetting["RefreshLifetime"])));
                 //end cookies
 
 
