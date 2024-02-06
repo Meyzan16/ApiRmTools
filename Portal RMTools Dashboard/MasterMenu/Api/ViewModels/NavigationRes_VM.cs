@@ -14,7 +14,7 @@ namespace Api.ViewModels
         public string Route { get; set; }
         public int? OrderBy { get; set; }
         public int IsVisible { get; set; }
-        //public int? ParentNavigationId { get; set; }
+
         public int? ParentId { get; set; }
         public string Parent { get; set; }
         public string Visible_Name { get; set; }
@@ -24,7 +24,6 @@ namespace Api.ViewModels
         public string DeletedTime { get; set; }
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
-        public string DeletedBy { get; set; }
-        public string Role { get; set; }        
+        public string DeletedBy { get; set; }    
     }
 }

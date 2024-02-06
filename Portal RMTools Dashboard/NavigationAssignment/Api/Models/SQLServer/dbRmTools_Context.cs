@@ -1,19 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.Models.SQLServer;
 
 public partial class dbRmTools_Context : DbContext
 {
-    public dbRmTools_Context()
+    public dbRmTools_Context(IConfiguration configuration)
     {
+        _configuration = configuration;
     }
-
-    public dbRmTools_Context(DbContextOptions<dbRmTools_Context> options)
+    private readonly IConfiguration _configuration;
+    public dbRmTools_Context(IConfiguration configuration, DbContextOptions<dbRmTools_Context> options)
         : base(options)
     {
+        _configuration = configuration;
     }
+
+    public virtual DbSet<TblJwtRepository> TblJwtRepositories { get; set; }
+
+    public virtual DbSet<TblLogActivity> TblLogActivities { get; set; }
 
     public virtual DbSet<TblLogPerubahanKelolaan> TblLogPerubahanKelolaans { get; set; }
 
@@ -22,6 +29,8 @@ public partial class dbRmTools_Context : DbContext
     public virtual DbSet<TblMasterLookup> TblMasterLookups { get; set; }
 
     public virtual DbSet<TblMasterNasabahKelolaan> TblMasterNasabahKelolaans { get; set; }
+
+    public virtual DbSet<TblMasterNasabahKelolaanForOd> TblMasterNasabahKelolaanForOds { get; set; }
 
     public virtual DbSet<TblMasterNavigation> TblMasterNavigations { get; set; }
 
@@ -32,11 +41,33 @@ public partial class dbRmTools_Context : DbContext
     public virtual DbSet<TblUser> TblUsers { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=127.0.0.1,1435;Initial Catalog=db_rmtools_meyzan;User ID=sa;Password=bni46SQL;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseSqlServer(_configuration.GetConnectionString("dbSqlServer"));
+        }
+    }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<TblJwtRepository>(entity =>
+        {
+            entity.ToTable("Tbl_JwtRepository");
+
+            entity.Property(e => e.ClientIp).HasColumnName("ClientIP");
+            entity.Property(e => e.EndTime).HasColumnType("datetime");
+            entity.Property(e => e.StartTime).HasColumnType("datetime");
+            entity.Property(e => e.Token).HasColumnType("text");
+        });
+
+        modelBuilder.Entity<TblLogActivity>(entity =>
+        {
+            entity.ToTable("Tbl_LogActivity");
+
+            entity.Property(e => e.ActionTime).HasColumnType("datetime");
+            entity.Property(e => e.Ip).HasColumnName("IP");
+            entity.Property(e => e.Os).HasColumnName("OS");
+        });
+
         modelBuilder.Entity<TblLogPerubahanKelolaan>(entity =>
         {
             entity.ToTable("Tbl_LogPerubahanKelolaan");
@@ -125,6 +156,45 @@ public partial class dbRmTools_Context : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("DeletedBy_Id");
             entity.Property(e => e.FileId).HasColumnName("File_Id");
+            entity.Property(e => e.KodeUnit).HasColumnName("Kode_unit");
+            entity.Property(e => e.NamaNasabahDebitur).HasColumnName("Nama_nasabah_debitur");
+            entity.Property(e => e.NamaParentNasabah).HasColumnName("Nama_parent_nasabah");
+            entity.Property(e => e.NamaUnit)
+                .HasMaxLength(500)
+                .HasColumnName("Nama_unit");
+            entity.Property(e => e.NppBa)
+                .HasMaxLength(50)
+                .HasColumnName("Npp_BA");
+            entity.Property(e => e.NppRm)
+                .HasMaxLength(50)
+                .HasColumnName("Npp_RM");
+            entity.Property(e => e.NppRmtransaksi)
+                .HasMaxLength(50)
+                .HasColumnName("Npp_RMTransaksi");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Updated_at");
+            entity.Property(e => e.UpdatedById)
+                .HasColumnType("datetime")
+                .HasColumnName("UpdatedBy_Id");
+        });
+
+        modelBuilder.Entity<TblMasterNasabahKelolaanForOd>(entity =>
+        {
+            entity.ToTable("Tbl_MasterNasabahKelolaanForODS");
+
+            entity.Property(e => e.Cif)
+                .HasMaxLength(50)
+                .HasColumnName("CIF");
+            entity.Property(e => e.CifParent)
+                .HasMaxLength(500)
+                .HasColumnName("CIF_Parent");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("Created_at");
+            entity.Property(e => e.CreatedById)
+                .HasColumnType("datetime")
+                .HasColumnName("CreatedBy_Id");
             entity.Property(e => e.KodeUnit).HasColumnName("Kode_unit");
             entity.Property(e => e.NamaNasabahDebitur).HasColumnName("Nama_nasabah_debitur");
             entity.Property(e => e.NamaParentNasabah).HasColumnName("Nama_parent_nasabah");

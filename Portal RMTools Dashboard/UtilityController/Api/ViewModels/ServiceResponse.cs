@@ -17,4 +17,10 @@ namespace Api.ViewModels
         public string Message { get; set; }
         public T Data { get; set; }
     }
+
+    public class ServiceResponseDataTable<T>
+    {
+        public int recordTotals { get; set; }
+        public List<T> Data { get; set; }
+    }
 }

@@ -36,8 +36,6 @@ namespace Api
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
-
-
             services.AddDbContext<dbRmTools_Context>(options =>
            options.UseSqlServer(Configuration.GetConnectionString("dbSqlServer")));
 
@@ -126,7 +124,7 @@ namespace Api
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/Apisimilarity/swagger/v1/swagger.json", "WordSimilarityApi");
+                c.SwaggerEndpoint("/ServiceRMT/RMT_ApiMasterMenu/swagger/v1/swagger.json", "Production");
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "local");
                 c.DocumentTitle = "Documentation";
                 c.DocExpansion(DocExpansion.None);

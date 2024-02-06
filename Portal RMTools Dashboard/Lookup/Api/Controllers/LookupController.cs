@@ -13,14 +13,14 @@ namespace Api.Controllers
     [Route("api/[controller]/[action]")]
     [ApiController]
 
-    public class MasterMenuController : ControllerBase
+    public class LookupController : ControllerBase
     {
         private readonly IDecryptManager _decryptManager;
         public readonly ITokenManager _tokenManager;
         public readonly IMasterLookupRepo _executeRepo;
         private readonly dbRmTools_Context _context;
 
-        public MasterMenuController(IDecryptManager decryptManager, dbRmTools_Context context, ITokenManager tokenManager, IMasterLookupRepo executeRepo)
+        public LookupController(IDecryptManager decryptManager, dbRmTools_Context context, ITokenManager tokenManager, IMasterLookupRepo executeRepo)
         {
             _decryptManager = decryptManager;
             _context = context;
@@ -218,8 +218,7 @@ namespace Api.Controllers
             var res = new ServiceResponseSingle<ServiceResponseDataTable<MasterLookupRes_VM>>();
             try
             {
-                var _ = await _executeRepo.LoadDataAsync(req.sortColumn, req.sortColumnDir, req.pageNumber, req.pageSize
-                    , req.Type, req.Name);
+                var _ = await _executeRepo.LoadDataAsync(req.sortColumn, req.sortColumnDir, req.pageNumber, req.pageSize, req.Type, req.Name);
 
                 if (_.status == true)
                 {

@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "Lookup\Api\Api.cspro
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NavigationAssignment", "NavigationAssignment", "{C7965874-A280-4164-B5A2-E2542CE14C05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "NavigationAssignment\Api\Api.csproj", "{1D58DE54-C4DF-4992-AC3F-AAE69786A0B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "NavigationAssignment\Api\Api.csproj", "{1D58DE54-C4DF-4992-AC3F-AAE69786A0B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -212,6 +212,48 @@ namespace Api.Controllers
         }
         #endregion
 
+        #region LOADDATA
+        [Authorize]
+        [DisableCors]
+        [HttpPost]
+        public async Task<IActionResult> LoadData([FromBody] DataTableReq_VM req)
+        {
+            var res = new ServiceResponseSingle<ServiceResponseDataTable<NavigationRes_VM>>();
+            try
+            {
+                var _ = await _news_Repo.LoadDataAsync(req.sortColumn, req.sortColumnDir, req.pageNumber, req.pageSize, req.Name, req.Type, req.Parent);
+
+                if (_.status == true)
+                {
+                    var data = new ServiceResponseDataTable<NavigationRes_VM>()
+                    {
+                        Data = _.data,
+                        recordTotals = _.recordTotals
+                    };
+
+                    res.Code = 1;
+                    res.Message = "sukses";
+                    res.Data = data;
+                }
+                else
+                {
+                    res.Code = -2;
+                    res.Message = _.error;
+                }
+            }
+            catch (Exception ex)
+            {
+                res.Code = -1;
+                res.Message = ex.Message == null ? ex.InnerException.ToString() : ex.Message.ToString();
+            }
+
+            return new OkObjectResult(res);
+
+        }
+        #endregion
+
+      
+
 
     }
 }

@@ -11,6 +11,7 @@ using Api.Components;
 using Api.Models.SQLOracle;
 using Api.Services;
 using Api.Models.SQLServer;
+using Api.Repositories;
 
 namespace Api
 {
@@ -29,6 +30,7 @@ namespace Api
 
             services.AddScoped<ITokenManager, TokenManager>();
             services.AddScoped<IDecryptManager, DecryptManager>();
+            services.AddScoped<IUtilityRepo, UtilityRepo>();
 
 
             services.AddControllers();
@@ -37,10 +39,10 @@ namespace Api
 
             //create sendiri DI untuk configurasi database dbPortalPace
             services.AddDbContext<ModelContext>(options =>
-             options.UseSqlServer(Configuration.GetConnectionString("dbOracle")));
+            options.UseSqlServer(Configuration.GetConnectionString("dbOracle")));
 
             services.AddDbContext<dbRmTools_Context>(options =>
-           options.UseSqlServer(Configuration.GetConnectionString("dbSqlServer")));
+            options.UseSqlServer(Configuration.GetConnectionString("dbSqlServer")));
 
 
             //add cors

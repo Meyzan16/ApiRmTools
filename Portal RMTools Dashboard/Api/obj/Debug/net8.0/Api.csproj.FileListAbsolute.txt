@@ -41,6 +41,9 @@ D:\DashboardRMTools\Portal RMTools Dashboard\Api\bin\Debug\net8.0\Microsoft.Iden
 D:\DashboardRMTools\Portal RMTools Dashboard\Api\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 D:\DashboardRMTools\Portal RMTools Dashboard\Api\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
 D:\DashboardRMTools\Portal RMTools Dashboard\Api\bin\Debug\net8.0\Microsoft.OpenApi.dll
+D:\DashboardRMTools\Portal RMTools Dashboard\Api\bin\Debug\net8.0\Microsoft.Owin.dll
+D:\DashboardRMTools\Portal RMTools Dashboard\Api\bin\Debug\net8.0\Microsoft.Owin.Security.dll
+D:\DashboardRMTools\Portal RMTools Dashboard\Api\bin\Debug\net8.0\Microsoft.Owin.Security.Cookies.dll
 D:\DashboardRMTools\Portal RMTools Dashboard\Api\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
 D:\DashboardRMTools\Portal RMTools Dashboard\Api\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
 D:\DashboardRMTools\Portal RMTools Dashboard\Api\bin\Debug\net8.0\Mono.TextTemplating.dll
@@ -57,6 +60,7 @@ D:\DashboardRMTools\Portal RMTools Dashboard\Api\bin\Debug\net8.0\NuGet.Protocol
 D:\DashboardRMTools\Portal RMTools Dashboard\Api\bin\Debug\net8.0\NuGet.Versioning.dll
 D:\DashboardRMTools\Portal RMTools Dashboard\Api\bin\Debug\net8.0\Oracle.EntityFrameworkCore.dll
 D:\DashboardRMTools\Portal RMTools Dashboard\Api\bin\Debug\net8.0\Oracle.ManagedDataAccess.dll
+D:\DashboardRMTools\Portal RMTools Dashboard\Api\bin\Debug\net8.0\Owin.dll
 D:\DashboardRMTools\Portal RMTools Dashboard\Api\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
 D:\DashboardRMTools\Portal RMTools Dashboard\Api\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 D:\DashboardRMTools\Portal RMTools Dashboard\Api\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
@@ -240,6 +244,7 @@ D:\DashboardRMTools\Portal RMTools Dashboard\Api\obj\Debug\net8.0\Api.AssemblyIn
 D:\DashboardRMTools\Portal RMTools Dashboard\Api\obj\Debug\net8.0\Api.csproj.CoreCompileInputs.cache
 D:\DashboardRMTools\Portal RMTools Dashboard\Api\obj\Debug\net8.0\Api.MvcApplicationPartsAssemblyInfo.cs
 D:\DashboardRMTools\Portal RMTools Dashboard\Api\obj\Debug\net8.0\Api.MvcApplicationPartsAssemblyInfo.cache
+D:\DashboardRMTools\Portal RMTools Dashboard\Api\obj\Debug\net8.0\Api.sourcelink.json
 D:\DashboardRMTools\Portal RMTools Dashboard\Api\obj\Debug\net8.0\staticwebassets.build.json
 D:\DashboardRMTools\Portal RMTools Dashboard\Api\obj\Debug\net8.0\staticwebassets.development.json
 D:\DashboardRMTools\Portal RMTools Dashboard\Api\obj\Debug\net8.0\staticwebassets\msbuild.Api.Microsoft.AspNetCore.StaticWebAssets.props

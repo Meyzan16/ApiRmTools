@@ -9,7 +9,7 @@ namespace Api.Components
 {
     public interface IDecryptManager
     {
-        Task<(bool status, int Id)> Decrypt(string UID);
+        DecryptUID Decrypt(string UID);
 
     }
     public class DecryptManager : IDecryptManager
@@ -29,7 +29,7 @@ namespace Api.Components
             _accessor = accessor;
         }
 
-        public async Task<(bool status, int Id)> Decrypt(string UID)
+        public DecryptUID Decrypt(string UID)
         {
 
             try
@@ -53,12 +53,21 @@ namespace Api.Components
 
                                 if (int.TryParse(decryptedIdString, out int decryptedId))
                                 {
-                                    return (true, decryptedId);
+                                    return new DecryptUID()
+                                    {
+                                        Id = decryptedId,
+                                        status = true,
+                                        message = ""
+                                    };
                                 }
                                 else
                                 {
-                                    // Not Match
-                                    return (false, 0); 
+                                    return new DecryptUID()
+                                    {
+                                        Id = 0,
+                                        status = false,
+                                        message = "UID not valid decrypted"
+                                    };
                                 }
                             }
                         }
@@ -68,12 +77,17 @@ namespace Api.Components
             }
             catch (Exception ex)
             {
-                return (false, 0);
+                return new DecryptUID
+                {
+                    Id = 0,
+                    status = false,
+                    message = ex.Message
+                };
             }
 
 
         }
-    
+
     }
 
 }

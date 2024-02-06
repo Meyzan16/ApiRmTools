@@ -61,7 +61,6 @@ namespace Api.Repositories
         }
         #endregion
 
-
         #region View
         public async Task<(bool status, string error, TblMasterLookup data)>
             ViewAsync(int id)

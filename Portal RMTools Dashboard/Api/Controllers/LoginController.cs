@@ -10,6 +10,8 @@ using Api.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Api.Components;
+using Api.Authentication;
+using NuGet.Common;
 
 namespace Api.Controllers
 {
@@ -18,18 +20,16 @@ namespace Api.Controllers
     public class LoginController : ControllerBase
     {
         private readonly IUserManager _userManager;
-        private readonly IDecryptManager _decryptManager;
+        private readonly IRefreshToken _refreshToken;
 
-        private readonly dbRmTools_Context _context; 
-        public LoginController(IConfiguration config, IUserManager userManager, IDecryptManager decryptManager, 
-            dbRmTools_Context context)
+        public LoginController(IUserManager userManager, IRefreshToken refreshToken)
         {
             _userManager = userManager;
-            _decryptManager = decryptManager;
-            _context = context;
+            _refreshToken = refreshToken;
         }
 
-  
+        [AllowAnonymous]
+        [DisableCors]
         [HttpPost]
         public IActionResult Authentication ([FromBody] Login req)
         {
@@ -46,9 +46,40 @@ namespace Api.Controllers
 
             var logRes = new LoginRes()
             {
-                JWT_Token = Token.jwt,
+                token = Token.jwt,
+                refreshToken = Token.refreshToken
             };
 
+            res.Code = 1;
+            res.Message = "success";
+            res.Data = logRes;
+
+            return new OkObjectResult(res);
+        }
+
+        [AllowAnonymous]
+        [DisableCors]
+        [HttpGet]
+        public IActionResult RefreshToken()
+        {
+            ServiceResponseSingle<LoginRes> res = new ServiceResponseSingle<LoginRes>();
+            var cookies = Request.Cookies;
+            string refreshToken = cookies["RefreshToken"];
+
+            var Token = _refreshToken.DoRefreshToken(refreshToken);
+
+            if (Token.token == "" || Token.token == null)
+            {
+                res.Code = -1;
+                res.Message = Token.error;
+                return new OkObjectResult(res);
+            }
+
+            var logRes = new LoginRes()
+            {
+                token = Token.token,
+                refreshToken = Token.refreshToken
+            };
 
             res.Code = 1;
             res.Message = "success";
@@ -57,5 +88,7 @@ namespace Api.Controllers
             return new OkObjectResult(res);
 
         }
+
+
     }
 }

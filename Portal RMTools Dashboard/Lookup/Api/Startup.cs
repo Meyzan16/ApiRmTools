@@ -126,7 +126,7 @@ namespace Api
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/Apisimilarity/swagger/v1/swagger.json", "WordSimilarityApi");
+                c.SwaggerEndpoint("/ServiceRMT/RMT_ApiLookup/swagger/v1/swagger.json", "ProductionLookup");
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "local");
                 c.DocumentTitle = "Documentation";
                 c.DocExpansion(DocExpansion.None);

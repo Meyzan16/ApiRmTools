@@ -10,6 +10,9 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Api.Components;
+using Api.Repositories;
+using Api.Authentication;
+using Service.WebApi.Catalog.Services;
 
 namespace Api
 {
@@ -25,9 +28,12 @@ namespace Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddScoped<IRTokenRepository, RTokenRepository>();
             services.AddScoped<IUserManager, UserManager>();
             services.AddScoped<IDecryptManager, DecryptManager>();
+            services.AddScoped<IRefreshToken, RefreshToken>();
+            services.AddScoped<ITokenManager, TokenManager>();
+            services.AddScoped<ICookies, Cookies>();
 
             services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -81,35 +87,7 @@ namespace Api
             var appSettingSection = Configuration.GetSection("AppSettings");
             services.Configure<CredentialAttr>(appSettingSection);
             // Extract appsetting values
-            var appSettings = appSettingSection.Get<CredentialAttr>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
-            var issuer = appSettings.Issuer;
-
-
-            // Set authentication settings
-            services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-             .AddJwtBearer(x =>
-             {
-                 x.RequireHttpsMetadata = false;
-                 x.SaveToken = true;
-                 x.TokenValidationParameters = new TokenValidationParameters
-                 {
-                     // Set validation to be challanged by our credential
-                     ValidateIssuerSigningKey = true,
-                     IssuerSigningKey = new SymmetricSecurityKey(key),
-                     ValidateIssuer = true,
-                     ValidIssuer = issuer,
-                     ValidateAudience = false
-                 };
-             });
-
-
-            services.AddRazorPages();
-            services.AddHttpContextAccessor();
+            services.AddHttpContextAccessor(); 
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -121,12 +99,11 @@ namespace Api
 
             app.UseSwagger();
             app.UseSwaggerUI(c => {
-                c.SwaggerEndpoint("/Apisimilarity/swagger/v1/swagger.json", "WordSimilarityApi");
+                c.SwaggerEndpoint("/ServiceRMT/RMT_ApiLogin/swagger/v1/swagger.json", "Production");
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "local");
                 c.DocumentTitle = "Documentation";
                 c.DocExpansion(DocExpansion.None);
             });
-
 
             app.UseRouting();
             app.UseAuthentication();

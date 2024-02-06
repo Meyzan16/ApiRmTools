@@ -20,7 +20,7 @@ namespace Api.Repositories
 
         Task<(bool status, string error, List<NavigationRes_VM> data, int recordTotals)>
            LoadDataAsync(string sortColumn, string sortColumnDir, int pageNumber,
-               int pageSize, string Name, string Type, string Role, string Parent);
+               int pageSize, string Name, string Type, string Parent);
 
     }
 
@@ -177,9 +177,8 @@ namespace Api.Repositories
         #endregion
 
         #region LOADDATA
-        public async Task<(bool status, string error, List<NavigationRes_VM> data, int recordTotals)>
-            LoadDataAsync(string sortColumn, string sortColumnDir, int pageNumber,
-                int pageSize, string Name, string Type, string Role, string Parent)
+        public async Task<(bool status, string error, List<NavigationRes_VM> data, int recordTotals)>LoadDataAsync(string sortColumn, string sortColumnDir, int pageNumber,
+                int pageSize, string Name, string Type, string Parent)
         {
             try
             {
@@ -187,7 +186,6 @@ namespace Api.Repositories
                 sortColumnDir = sortColumnDir == "" ? null : sortColumnDir;
                 Name = Name == "" ? null : Name;
                 Type = Type == "" ? null : Type;
-                Role = Role == "" ? null : Role;
                 Parent = Parent == "" ? null : Parent;
 
                 var list = await StoredProcedureExecutor.ExecuteSPListAsync<NavigationRes_VM>
@@ -199,7 +197,6 @@ namespace Api.Repositories
 
                            new SqlParameter("@Name", Name),
                            new SqlParameter("@Type", Type),
-                           new SqlParameter("@Role", Role),
                            new SqlParameter("@Parent", Parent)
                 });
 
@@ -207,7 +204,6 @@ namespace Api.Repositories
                     (_context, "[sp_PengaturanMenu_Count]", new SqlParameter[] {
                            new SqlParameter("@Name", Name),
                            new SqlParameter("@Type", Type),
-                           new SqlParameter("@Role", Role),
                            new SqlParameter("@Parent", Parent)
                 });
 

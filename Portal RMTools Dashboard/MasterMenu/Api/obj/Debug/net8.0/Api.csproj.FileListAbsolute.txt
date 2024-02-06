@@ -240,6 +240,7 @@ D:\DashboardRMTools\Portal RMTools Dashboard\MasterMenu\Api\obj\Debug\net8.0\Api
 D:\DashboardRMTools\Portal RMTools Dashboard\MasterMenu\Api\obj\Debug\net8.0\Api.csproj.CoreCompileInputs.cache
 D:\DashboardRMTools\Portal RMTools Dashboard\MasterMenu\Api\obj\Debug\net8.0\Api.MvcApplicationPartsAssemblyInfo.cs
 D:\DashboardRMTools\Portal RMTools Dashboard\MasterMenu\Api\obj\Debug\net8.0\Api.MvcApplicationPartsAssemblyInfo.cache
+D:\DashboardRMTools\Portal RMTools Dashboard\MasterMenu\Api\obj\Debug\net8.0\Api.sourcelink.json
 D:\DashboardRMTools\Portal RMTools Dashboard\MasterMenu\Api\obj\Debug\net8.0\staticwebassets.build.json
 D:\DashboardRMTools\Portal RMTools Dashboard\MasterMenu\Api\obj\Debug\net8.0\staticwebassets.development.json
 D:\DashboardRMTools\Portal RMTools Dashboard\MasterMenu\Api\obj\Debug\net8.0\staticwebassets\msbuild.Api.Microsoft.AspNetCore.StaticWebAssets.props

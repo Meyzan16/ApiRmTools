@@ -12,8 +12,8 @@ namespace Api.ViewModels
     }
     public class LoginRes
     {
-        public string JWT_Token { get; set; }
-        public string Refresh_Token { get; set; }
+        public string token { get; set; }
+        public string refreshToken { get; set; }
         public string Error { get; set;  }
     }
 
