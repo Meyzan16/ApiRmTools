@@ -58,125 +58,133 @@ namespace Api.Authentication
             var jwt = "";
             var jwttoken = _context.TblJwtRepositories.Where(x => x.RefreshToken == refresh_tokenn).FirstOrDefault();
 
-            var principals = _tokenManager.GetPrincipal(jwttoken.Token);
-
-            if(principals != null)
+            if (jwttoken != null)
             {
-                //ambil jwt saat ini
-                var tokenRepo = _repo.GetToken(refresh_tokenn, principals.Id, principals.IpAddress);
+                var principals = _tokenManager.GetPrincipal(jwttoken.Token);
 
-                // decison token 
-                if (tokenRepo == null)
+                if (principals != null)
                 {
-                    return ("", "", "Silahkan login");
-                }
+                    //ambil jwt saat ini
+                    var tokenRepo = _repo.GetToken(refresh_tokenn, principals.Id, principals.IpAddress);
 
-                if (tokenRepo.IsStop == true)
-                {
-                    return ("", "", "Refresh token tidak berlaku");
-                }
-
-                // get claims from existing token
-                if (principals.status == true)
-                {
-                    // expire the old refresh_token 
-                    tokenRepo.EndTime = DateTime.Now;
-                    tokenRepo.IsStop = true;
-                    var updateFlag = _repo.ExpireToken(tokenRepo);
-                    //end
-
-                    // update expries refresh token yang tidak digunakan lagi
-                    using (dbRmTools_Context db = new dbRmTools_Context(_configuration))
+                    // decison token 
+                    if (tokenRepo == null)
                     {
-                        foreach (var a in db.TblJwtRepositories.Where(x => x.UserId == principals.Id && x.IsStop == false).ToList())
+                        return ("", "", "Silahkan login");
+                    }
+
+                    if (tokenRepo.IsStop == true)
+                    {
+                        return ("", "", "Refresh token tidak berlaku");
+                    }
+
+                    // get claims from existing token
+                    if (principals.status == true)
+                    {
+                        // expire the old refresh_token 
+                        tokenRepo.EndTime = DateTime.Now;
+                        tokenRepo.IsStop = true;
+                        var updateFlag = _repo.ExpireToken(tokenRepo);
+                        //end
+
+                        // update expries refresh token yang tidak digunakan lagi
+                        using (dbRmTools_Context db = new dbRmTools_Context(_configuration))
                         {
-                            if (a != null)
+                            foreach (var a in db.TblJwtRepositories.Where(x => x.UserId == principals.Id && x.IsStop == false).ToList())
                             {
-                                a.EndTime = DateTime.Now;
-                                a.IsStop = true;
-                                db.TblJwtRepositories.Update(a);
-                                db.SaveChanges();
+                                if (a != null)
+                                {
+                                    a.EndTime = DateTime.Now;
+                                    a.IsStop = true;
+                                    db.TblJwtRepositories.Update(a);
+                                    db.SaveChanges();
+                                }
                             }
                         }
-                    }
-                 
-                    if (updateFlag)
-                    {
-                        #region Engine Generate secret key 16
-                        ////generate Secret key 16 byte
-                        //byte[] keyBytes = new byte[16];
-                        //using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
-                        //{
-                        //    rng.GetBytes(keyBytes);
-                        //}
-                        //string keyUID = Convert.ToBase64String(keyBytes);
-                        ////end generate
-                        ///
-                        #endregion
 
-                        // authentication successful so generate jwt token claims
-                        var tokenHandler = new JwtSecurityTokenHandler();
-                        var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-                        string encryptedUid = EncryptString(principals.Id.ToString());
-                        var tokenDescriptor = new SecurityTokenDescriptor
+                        if (updateFlag)
                         {
-                            Subject = new ClaimsIdentity(new Claim[]
+                            #region Engine Generate secret key 16
+                            ////generate Secret key 16 byte
+                            //byte[] keyBytes = new byte[16];
+                            //using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+                            //{
+                            //    rng.GetBytes(keyBytes);
+                            //}
+                            //string keyUID = Convert.ToBase64String(keyBytes);
+                            ////end generate
+                            ///
+                            #endregion
+
+                            // authentication successful so generate jwt token claims
+                            var tokenHandler = new JwtSecurityTokenHandler();
+                            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+                            string encryptedUid = EncryptString(principals.Id.ToString());
+                            var tokenDescriptor = new SecurityTokenDescriptor
                             {
+                                Subject = new ClaimsIdentity(new Claim[]
+                                {
                                      new Claim("UID", encryptedUid),
                                      new Claim("IpAddress",  principals.IpAddress),
                                      new Claim("Hostname",  principals.HostName),
-                            }),
+                                }),
 
-                            Expires = DateTime.UtcNow.AddHours(double.Parse(GetConfig.AppSetting["RefreshLifetime"])), //1 jam
-                            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                            Issuer = _appSettings.Issuer
-                        };
+                                Expires = DateTime.UtcNow.AddHours(double.Parse(GetConfig.AppSetting["RefreshLifetime"])), //1 jam
+                                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                                Issuer = _appSettings.Issuer
+                            };
 
-                        var token = tokenHandler.CreateToken(tokenDescriptor);
-                        jwt = tokenHandler.WriteToken(token);
+                            var token = tokenHandler.CreateToken(tokenDescriptor);
+                            jwt = tokenHandler.WriteToken(token);
 
-                        // add a new refresh_token  
-                        var refresh_token = Guid.NewGuid().ToString().Replace("-", "");
-                        var addFlag = _repo.AddToken(new TblJwtRepository
+                            // add a new refresh_token  
+                            var refresh_token = Guid.NewGuid().ToString().Replace("-", "");
+                            var addFlag = _repo.AddToken(new TblJwtRepository
+                            {
+                                UserId = principals.Id,
+                                ClientIp = principals.IpAddress,
+                                RefreshToken = refresh_token,
+                                Token = jwt,
+                                StartTime = DateTime.Now,
+                                Hostname = principals.HostName,
+                                IsStop = false
+                            });
+
+                            var data = _context.TblUsers.Where(x => x.Id == principals.Id).FirstOrDefault();
+                            //update data lama
+                            data.StartLogin = DateTime.Now;
+                            data.Token = jwt;
+                            data.Uid = encryptedUid;
+                            _context.Entry(data).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                            _context.SaveChanges();
+
+                            //add cookies
+                            _cookies.SetTokenCookies("Token", jwt, DateTime.UtcNow.AddMinutes(double.Parse(GetConfig.AppSetting["TokenLifetime"])));
+                            _cookies.SetTokenCookies("RefreshToken", refresh_token, DateTime.UtcNow.AddHours(double.Parse(GetConfig.AppSetting["RefreshLifetime"])));
+                            //end cookies
+                            return (jwt, refresh_token, "");
+                        }
+                        else
                         {
-                            UserId = principals.Id,
-                            ClientIp = principals.IpAddress,
-                            RefreshToken = refresh_token,
-                            Token = jwt,
-                            StartTime = DateTime.Now,
-                            Hostname = principals.HostName,
-                            IsStop = false
-                        });
+                            return ("", "", "Not created new token from refresh token");
+                        }
 
-                        var data = _context.TblUsers.Where(x => x.Id == principals.Id).FirstOrDefault();
-                        //update data lama
-                        data.StartLogin = DateTime.Now;
-                        data.Token = jwt;
-                        data.Uid = encryptedUid;
-                        _context.Entry(data).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                        _context.SaveChanges();
-
-                        //add cookies
-                        _cookies.SetTokenCookies("Token", jwt, DateTime.UtcNow.AddMinutes(double.Parse(GetConfig.AppSetting["TokenLifetime"])));
-                        _cookies.SetTokenCookies("RefreshToken", refresh_token, DateTime.UtcNow.AddHours(double.Parse(GetConfig.AppSetting["RefreshLifetime"])));
-                        //end cookies
-                        return (jwt, refresh_token, "");
                     }
                     else
                     {
-                        return ("", "", "Not created new token from refresh token");
+                        return ("", "", principals.message);
                     }
-
                 }
                 else
                 {
-                    return ("", "", principals.message);
+                    return ("", "", "Token not valid and not accesss");
                 }
             }
             else
             {
-                return ("", "", "Token not found");
+                return ("", "", "Please login for access this resource");
             }
+           
 
            
 
