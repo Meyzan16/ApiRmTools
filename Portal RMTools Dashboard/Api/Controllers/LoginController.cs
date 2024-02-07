@@ -12,6 +12,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Api.Components;
 using Api.Authentication;
 using NuGet.Common;
+using Newtonsoft.Json.Linq;
+using Service.WebApi.Catalog.Services;
 
 namespace Api.Controllers
 {
@@ -21,55 +23,27 @@ namespace Api.Controllers
     {
         private readonly IUserManager _userManager;
         private readonly IRefreshToken _refreshToken;
+        private readonly ITokenManager _tokenManager;
+        private readonly dbRmTools_Context _context;
 
-        public LoginController(IUserManager userManager, IRefreshToken refreshToken)
+        public LoginController(IUserManager userManager, IRefreshToken refreshToken, dbRmTools_Context context, ITokenManager tokenManager)
         {
             _userManager = userManager;
             _refreshToken = refreshToken;
+            _context = context;
+            _tokenManager = tokenManager;
         }
 
         [AllowAnonymous]
-        [DisableCors]
         [HttpPost]
         public IActionResult Authentication ([FromBody] Login req)
         {
             ServiceResponseSingle<LoginRes> res = new ServiceResponseSingle<LoginRes>();
-
-            var Token = _userManager.Authenticate(req.username, req.password);
-
-            if (Token.jwt == "" || Token.jwt == null)
+            try
             {
-                res.Code = -1;
-                res.Message = Token.error;
-                return new OkObjectResult(res);
-            }
+                var Token = _userManager.Authenticate(req.username, req.password);
 
-            var logRes = new LoginRes()
-            {
-                token = Token.jwt,
-                refreshToken = Token.refreshToken
-            };
-
-            res.Code = 1;
-            res.Message = "success";
-            res.Data = logRes;
-
-            return new OkObjectResult(res);
-        }
-
-        [AllowAnonymous]
-        [DisableCors]
-        [HttpGet]
-        public IActionResult RefreshToken()
-        {
-            ServiceResponseSingle<LoginRes> res = new ServiceResponseSingle<LoginRes>();
-            var cookies = Request.Cookies;
-            string refreshToken = cookies["RefreshToken"];
-            if(refreshToken != null)
-            {
-                var Token = _refreshToken.DoRefreshToken(refreshToken);
-
-                if (Token.token == "" || Token.token == null)
+                if (Token.jwt == "" || Token.jwt == null)
                 {
                     res.Code = -1;
                     res.Message = Token.error;
@@ -78,25 +52,132 @@ namespace Api.Controllers
 
                 var logRes = new LoginRes()
                 {
-                    token = Token.token,
+                    token = Token.jwt,
                     refreshToken = Token.refreshToken
                 };
 
                 res.Code = 1;
                 res.Message = "success";
                 res.Data = logRes;
+            }
+            catch (Exception ex)
+            {
+                res.Code = -1;
+                res.Message = ex.Message == null ? ex.InnerException.ToString() : ex.Message.ToString();
 
             }
-            else
+            return new OkObjectResult(res);
+        }
+
+        [HttpGet]
+        public IActionResult RefreshToken()
+        {
+            ServiceResponseSingle<LoginRes> res = new ServiceResponseSingle<LoginRes>();
+            try
             {
-                res.Code = 1;
-                res.Message = "Refresh token not found";
+                var cookies = Request.Cookies;
+                string refreshToken = cookies["RefreshToken"];
+                if(refreshToken != null)
+                {
+                    var Token = _refreshToken.DoRefreshToken(refreshToken);
+
+                    if (Token.token == "" || Token.token == null)
+                    {
+                        res.Code = -1;
+                        res.Message = Token.error;
+                        return new OkObjectResult(res);
+                    }
+
+                    var logRes = new LoginRes()
+                    {
+                        token = Token.token,
+                        refreshToken = Token.refreshToken
+                    };
+
+                    res.Code = 1;
+                    res.Message = "Refresh token success";
+                    res.Data = logRes;
+
+                }
+                else
+                {
+                    res.Code = 1;
+                    res.Message = "Refresh token not found";
+                }
+            }
+            catch (Exception ex)
+            {
+                res.Code = -1;
+                res.Message = ex.Message == null ? ex.InnerException.ToString() : ex.Message.ToString();
+
             }
 
             return new OkObjectResult(res);
 
         }
 
+        [Authorize]
+        [DisableCors]
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            ServiceResponseSingle<LoginRes> res = new ServiceResponseSingle<LoginRes>();
+            try
+            {
+                var cookies = Request.Cookies;
+                string token = cookies["Token"]; //refresh token untuk dapatkan token
 
+                if (token != null)
+                {
+                    var principals = _tokenManager.GetPrincipal(token);
+                    if (principals.status == true)
+                    {
+                        //Nonactive isLoggin
+                        var data = await _context.TblUsers.Where(x => x.Id == principals.Id).FirstOrDefaultAsync();
+
+                        data.IsLogin = false;
+                        _context.TblUsers.Update(data);
+                        await _context.SaveChangesAsync();
+
+                        var _ = await _context.TblJwtRepositories.Where(x=> x.UserId == principals.Id).FirstOrDefaultAsync();
+                        _.IsStop = true;
+                        _context.TblJwtRepositories.Update(_);
+                        await _context.SaveChangesAsync();
+
+
+                        // Hapus cookie
+                        Response.Cookies.Delete("RefreshToken");
+                        Response.Cookies.Delete("Token");
+
+
+                        res.Code = 1;
+                        res.Message = "Logout succefully";
+
+                    }
+                    else
+                    {
+                        res.Code = -1;
+                        res.Message = "Token is not valid";
+                    }
+
+                }
+                else
+                {
+                    res.Code = 1;
+                    res.Message = "Please login to access this resource";
+                }
+            }
+            catch (Exception ex)
+            {
+                res.Code = -1;
+                res.Message = ex.Message == null ? ex.InnerException.ToString() : ex.Message.ToString();
+
+            }
+  
+           
+
+            return new OkObjectResult(res);
+
+        }
     }
 }

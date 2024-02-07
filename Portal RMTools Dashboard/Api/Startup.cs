@@ -13,6 +13,7 @@ using Api.Components;
 using Api.Repositories;
 using Api.Authentication;
 using Service.WebApi.Catalog.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Api
 {
@@ -86,8 +87,45 @@ namespace Api
             // Get credential from appsetting.json file
             var appSettingSection = Configuration.GetSection("AppSettings");
             services.Configure<CredentialAttr>(appSettingSection);
+
             // Extract appsetting values
-            services.AddHttpContextAccessor(); 
+            var appSettings = appSettingSection.Get<CredentialAttr>();
+            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            var issuer = appSettings.Issuer;
+
+
+            // Set authentication settings
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
+            })
+             .AddJwtBearer(x =>
+             {
+                 x.RequireHttpsMetadata = false;
+                 x.SaveToken = true;
+                 x.TokenValidationParameters = new TokenValidationParameters
+                 {
+                     // Set validation to be challanged by our credential
+                     ValidateIssuerSigningKey = true,
+                     IssuerSigningKey = new SymmetricSecurityKey(key),
+                     ValidateIssuer = true,
+                     ValidIssuer = issuer,
+                     ValidateAudience = false
+                 };
+             })
+            .AddCookie(options =>
+             {
+                 options.LoginPath = "/api/Login/Authentication"; // Sesuaikan jalur login Anda
+                 options.LogoutPath = "/api/Login/Logout"; // Sesuaikan jalur logout Anda
+             });
+
+
+            services.AddRazorPages();
+            services.AddHttpContextAccessor();
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

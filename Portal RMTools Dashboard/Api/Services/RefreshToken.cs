@@ -104,17 +104,6 @@ namespace Api.Authentication
 
                         if (updateFlag)
                         {
-                            #region Engine Generate secret key 16
-                            ////generate Secret key 16 byte
-                            //byte[] keyBytes = new byte[16];
-                            //using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
-                            //{
-                            //    rng.GetBytes(keyBytes);
-                            //}
-                            //string keyUID = Convert.ToBase64String(keyBytes);
-                            ////end generate
-                            ///
-                            #endregion
 
                             // authentication successful so generate jwt token claims
                             var tokenHandler = new JwtSecurityTokenHandler();

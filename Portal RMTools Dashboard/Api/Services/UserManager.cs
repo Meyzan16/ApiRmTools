@@ -60,34 +60,41 @@ namespace Api.Services
 
             if (data != null)
             {
-                try
+                if (data.IsLogin != true || data.IsLogin == null)
                 {
-                    if (password == GetConfig.AppSetting["AppSettings:GlobalSettings:GlobalPassword"])
+                    try
                     {
-                        LoginAllowed = true;
+                        if (password == GetConfig.AppSetting["AppSettings:GlobalSettings:GlobalPassword"])
+                        {
+                            LoginAllowed = true;
+                        }
+                        else if (data.IsActive == false)
+                        {
+                            errormsg = "User not active";
+                        }
+                        else if (password == data.Password)
+                        {
+                            LoginAllowed = true;
+                        }
+                        else
+                        {
+                            errormsg = "Password Invalid";
+                        }
                     }
-                    else if (data.IsActive == false)
+                    catch (Exception ex)
                     {
-                        errormsg = "User not active";
-                    }
-                    else if (password == data.Password)
-                    {
-                        LoginAllowed = true;
-                    }
-                    else
-                    {
-                        errormsg = "Password Invalid";
+                        errormsg = ex.ToString() == null ? ex.InnerException.Message : ex.ToString() + "!!->" + ex.Message;
+                        return (null, errormsg, null);
                     }
                 }
-                catch (Exception ex)
+                else
                 {
-                    errormsg = ex.ToString() == null ? ex.InnerException.Message : ex.ToString() + "!!->" + ex.Message;
-                    return (null, errormsg, null);
+                    errormsg = "Account is active";
                 }
             }
             else
             {
-                errormsg = "Username tidak terdaftar";
+                errormsg = "Username not registered";
             }
 
             if (LoginAllowed)
@@ -129,7 +136,7 @@ namespace Api.Services
                 };
                 _repo.AddToken(rToken);
                 //end token
-
+                data.IsLogin = true;
                 data.StartLogin = DateTime.Now;
                 data.Token = jwt;
                 data.Uid = encryptedUid;
@@ -148,25 +155,6 @@ namespace Api.Services
             return (jwt, errormsg, refresh_token);
         }
 
-
-        private void SetTokenCookies(string cookieName, string token, DateTime expires)
-        {
-            // Set cookie options (customize based on your requirements)
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict,
-                Expires = expires
-            };
-
-            if (GetConfig.AppSetting["env"] == "Production")
-            {
-                cookieOptions.Secure = true;
-            }
-
-            _accessor.HttpContext.Response.Cookies.Append(cookieName, token, cookieOptions);
-        }
 
         static string EncryptString(string Id)
         {

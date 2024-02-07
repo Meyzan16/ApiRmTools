@@ -28,4 +28,6 @@ public partial class TblUser
     public string? Uid { get; set; }
 
     public string? SecretKey { get; set; }
+
+    public bool? IsLogin { get; set; }
 }

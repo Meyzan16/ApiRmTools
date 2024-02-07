@@ -1,4 +1,6 @@
-﻿namespace Api.Components
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Api.Components
 {
     public interface ICookies
     {
@@ -19,20 +21,23 @@
         {
             try
             {
+              
+
                 // Set cookie options (customize based on your requirements)
                 var cookieOptions = new CookieOptions
                 {
                     HttpOnly = true,
                     SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax,
-                    Expires = expires
+                    Expires = expires,
                 };
 
-                if (GetConfig.AppSetting["env"] == "Production" && _accessor.HttpContext.Request.IsHttps)
+                if (GetConfig.AppSetting["env"] == "Production")
                 {
                     cookieOptions.Secure = true;
                 }
 
-                _accessor.HttpContext.Response.Cookies.Append(cookieName, token, cookieOptions);
+                var httpContext = _accessor.HttpContext;
+                httpContext.Response.Cookies.Append(cookieName, token, cookieOptions);
 
                 return (true, "");
             }
