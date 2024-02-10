@@ -48,6 +48,8 @@ namespace Api.Services
         }
         public (string jwt, string error, string refreshToken) Authenticate(string username, string password)
         {
+            string? StageMode = GetConfig.AppSetting["env"];
+
             string errormsg = "";
             string jwt = "";
             string refresh_token = "";
@@ -114,8 +116,7 @@ namespace Api.Services
                                      new Claim("Hostname",  heserver.HostName),
 
                     }),
-
-                    Expires = DateTime.UtcNow.AddMinutes(double.Parse(GetConfig.AppSetting["TokenLifetime"])), //1 menit
+                    Expires = SetTokenExpiration(StageMode, "token"), // 1m
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                     Issuer = _appSettings.Issuer
                 };
@@ -145,11 +146,9 @@ namespace Api.Services
 
                 //add cookies
                 // Return JWT and refresh token as cookies
-                _cookies.SetTokenCookies("Token", jwt, DateTime.UtcNow.AddMinutes(double.Parse(GetConfig.AppSetting["TokenLifetime"])));
-                _cookies.SetTokenCookies("RefreshToken", refresh_token, DateTime.UtcNow.AddDays(double.Parse(GetConfig.AppSetting["RefreshLifetime"])));
+                _cookies.SetTokenCookies("Token", jwt, SetTokenExpiration(StageMode, "token"));
+                _cookies.SetTokenCookies("RefreshToken", refresh_token, SetTokenExpiration(StageMode, "refreshtoken"));
                 //end cookies
-
-
             }
 
             return (jwt, errormsg, refresh_token);
@@ -184,7 +183,28 @@ namespace Api.Services
 
         }
 
+        private DateTime SetTokenExpiration(string stageMode, string tokenType)
+        {
+            double tokenLifeTime = double.Parse(GetConfig.AppSetting["TokenLifetime"]);
+            double refreshLifeTime = double.Parse(GetConfig.AppSetting["RefreshLifetime"]);
 
-
+            double lifetimeInDays;
+            if (tokenType.ToLower() == "refreshtoken")
+            {
+                return DateTime.UtcNow.AddDays(refreshLifeTime);
+            }
+            else
+            {
+                // Token lifetime based on stage mode
+                if (stageMode.ToLower() == "development" && tokenType.ToLower() == "token")
+                {
+                    return DateTime.UtcNow.AddDays(tokenLifeTime);
+                }
+                else
+                {
+                    return DateTime.UtcNow.AddMinutes(tokenLifeTime);
+                }
+            }
+        }
     }
 }
