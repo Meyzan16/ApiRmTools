@@ -46,7 +46,7 @@ namespace Api.Controllers
                     if (_.status == true)
                     {
                         res.Code = 1;
-                        res.Message = "sukses";
+                        res.Message = "Created successfully";
                     }
                     else
                     {
@@ -91,7 +91,7 @@ namespace Api.Controllers
                     if (_.status == true)
                     {
                         res.Code = 1;
-                        res.Message = "sukses";
+                        res.Message = "Success";
                         res.Data = (_.data);
                     }
                     else
@@ -137,7 +137,7 @@ namespace Api.Controllers
                     if (_.status == true)
                     {
                         res.Code = 1;
-                        res.Message = "sukses";
+                        res.Message = "Deleted successfully";
                     }
                     else
                     {
@@ -181,7 +181,7 @@ namespace Api.Controllers
                     if (_.status == true)
                     {
                         res.Code = 1;
-                        res.Message = "sukses";
+                        res.Message = "Updated Successfully";
                     }
                     else
                     {
@@ -215,27 +215,36 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<IActionResult> LoadData([FromBody] DataTableReq_VM req)
         {
+            var DecryptUID = await _tokenManager.GetPrincipal();
             var res = new ServiceResponseSingle<ServiceResponseDataTable<MasterLookupRes_VM>>();
             try
             {
-                var _ = await _executeRepo.LoadDataAsync(req.sortColumn, req.sortColumnDir, req.pageNumber, req.pageSize, req.Type, req.Name);
-
-                if (_.status == true)
+                if (DecryptUID.status == true)
                 {
-                    var data = new ServiceResponseDataTable<MasterLookupRes_VM>()
-                    {
-                        Data = _.data,
-                        recordTotals = _.recordTotals
-                    };
+                    var _ = await _executeRepo.LoadDataAsync(req.sortColumn, req.sortColumnDir, req.pageNumber, req.pageSize, req.Type, req.Name);
 
-                    res.Code = 1;
-                    res.Message = "sukses";
-                    res.Data = data;
+                    if (_.status == true)
+                    {
+                        var data = new ServiceResponseDataTable<MasterLookupRes_VM>()
+                        {
+                            Data = _.data,
+                            recordTotals = _.recordTotals
+                        };
+
+                        res.Code = 1;
+                        res.Message = "sukses";
+                        res.Data = data;
+                    }
+                    else
+                    {
+                        res.Code = -2;
+                        res.Message = _.error;
+                    }
                 }
                 else
                 {
                     res.Code = -2;
-                    res.Message = _.error;
+                    res.Message = DecryptUID.error;
                 }
             }
             catch (Exception ex)

@@ -136,14 +136,18 @@ namespace Api.Controllers
                         var data = await _context.TblUsers.Where(x => x.Id == principals.Id).FirstOrDefaultAsync();
 
                         data.IsLogin = false;
+                        data.LastLogin = DateTime.Now;
                         _context.TblUsers.Update(data);
                         await _context.SaveChangesAsync();
 
-                        var _ = await _context.TblJwtRepositories.Where(x=> x.UserId == principals.Id).FirstOrDefaultAsync();
-                        _.IsStop = true;
-                        _context.TblJwtRepositories.Update(_);
-                        await _context.SaveChangesAsync();
-
+                        var _ = await _context.TblJwtRepositories.Where(x=> x.UserId == principals.Id).ToListAsync();
+                        foreach(var item in _)
+                        {
+                            item.IsStop = true;
+                            item.EndTime = DateTime.Now;
+                            _context.TblJwtRepositories.Update(item);
+                            await _context.SaveChangesAsync();
+                        }
 
                         // Hapus cookie
                         Response.Cookies.Delete("RefreshToken");
@@ -151,7 +155,7 @@ namespace Api.Controllers
 
 
                         res.Code = 1;
-                        res.Message = "Logout succefully";
+                        res.Message = "Logout succesfully";
 
                     }
                     else
