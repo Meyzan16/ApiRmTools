@@ -29,8 +29,8 @@ $RECYCLE.BIN/
 ## Visual Studio 2015/2017/2019 cache/options directory
 .vs/
 .vscode/
-*/bin/
-*/obj/
+**/bin/*
+**/obj/*
 **/PublishProfiles/*
 
 # Ignore NuGet packages
