@@ -38,7 +38,6 @@ namespace Api.Controllers
 
         #region DropdownRMTransaksi
         [Authorize]
-        [DisableCors]
         [HttpGet]
         public async Task<IActionResult> DropdownRMTransaksi()
         {
@@ -89,7 +88,6 @@ namespace Api.Controllers
 
         #region DropdownRMTransaksiByParamaters
         [Authorize]
-        [DisableCors]
         [HttpPost]
         public async Task<IActionResult> DropdownRMTransaksiByParameters([FromBody] UserId_VM req)
         {
@@ -135,7 +133,6 @@ namespace Api.Controllers
 
         #region DropdownRM/BAKomersial
         [Authorize]
-        [DisableCors]
         [HttpGet]
         public async Task<IActionResult> DropdownRMBAKomersial()
         {
@@ -186,7 +183,6 @@ namespace Api.Controllers
 
         #region DropdownRMBAKomersialByParamaters
         [Authorize]
-        [DisableCors]
         [HttpPost]
         public async Task<IActionResult> DropdownRMBAKomersialByParameters([FromBody] UserId_VM req)
         {
@@ -232,7 +228,6 @@ namespace Api.Controllers
 
         #region DropdownRM/BACorporasi
         [Authorize]
-        [DisableCors]
         [HttpGet]
         public async Task<IActionResult> DropdownRMBACorporasi()
         {
@@ -283,7 +278,6 @@ namespace Api.Controllers
 
         #region DropdownRMBACorporasiByParamaters
         [Authorize]
-        [DisableCors]
         [HttpPost]
         public async Task<IActionResult> DropdownRMBACorporasiByParameters([FromBody] UserId_VM req)
         {
