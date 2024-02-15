@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\DashboardRMTools\\Portal RMTools Dashboard\\UtilityController\\Api\\Api.csproj": {}
+    "A:\\BNI\\RMT-BE\\Portal RMTools Dashboard\\UtilityController\\Api\\Api.csproj": {}
   },
   "projects": {
-    "D:\\DashboardRMTools\\Portal RMTools Dashboard\\UtilityController\\Api\\Api.csproj": {
+    "A:\\BNI\\RMT-BE\\Portal RMTools Dashboard\\UtilityController\\Api\\Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\DashboardRMTools\\Portal RMTools Dashboard\\UtilityController\\Api\\Api.csproj",
+        "projectUniqueName": "A:\\BNI\\RMT-BE\\Portal RMTools Dashboard\\UtilityController\\Api\\Api.csproj",
         "projectName": "Api",
-        "projectPath": "D:\\DashboardRMTools\\Portal RMTools Dashboard\\UtilityController\\Api\\Api.csproj",
-        "packagesPath": "C:\\Users\\SDD-USER\\.nuget\\packages\\",
-        "outputPath": "D:\\DashboardRMTools\\Portal RMTools Dashboard\\UtilityController\\Api\\obj\\",
+        "projectPath": "A:\\BNI\\RMT-BE\\Portal RMTools Dashboard\\UtilityController\\Api\\Api.csproj",
+        "packagesPath": "C:\\Users\\Andra Ramadan\\.nuget\\packages\\",
+        "outputPath": "A:\\BNI\\RMT-BE\\Portal RMTools Dashboard\\UtilityController\\Api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\SDD-USER\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Andra Ramadan\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -34,9 +34,6 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "default"
         }
       },
       "frameworks": {
