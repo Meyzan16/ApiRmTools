@@ -117,7 +117,6 @@ namespace Api.Controllers
         }
 
         [Authorize]
-        [DisableCors]
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
