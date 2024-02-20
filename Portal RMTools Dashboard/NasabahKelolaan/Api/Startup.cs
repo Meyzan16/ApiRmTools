@@ -1,16 +1,14 @@
-﻿
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Swashbuckle.AspNetCore.SwaggerUI;
-using Api.ViewModels;
-using Microsoft.OpenApi.Models;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Api.Components;
-using Api.Services;
+﻿using Api.Components;
 using Api.Models.SQLServer;
 using Api.Repositories;
+using Api.Services;
+using Api.ViewModels;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerUI;
+using System.Text;
 
 namespace Api
 {

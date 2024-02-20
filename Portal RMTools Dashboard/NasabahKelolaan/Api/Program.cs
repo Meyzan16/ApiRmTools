@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Hosting;
-
 namespace Api
 {
     public class Program

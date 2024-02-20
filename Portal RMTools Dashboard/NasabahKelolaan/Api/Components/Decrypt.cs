@@ -1,7 +1,6 @@
 ﻿using Api.Models.SQLServer;
 using Api.Tools;
 using Api.ViewModels;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 using System.Security.Cryptography;
 using System.Text;
@@ -50,7 +49,7 @@ namespace Api.Components
                         {
                             using (StreamReader srDecrypt = new StreamReader(csDecrypt))
                             {
-                                string decryptedIdString =  srDecrypt.ReadToEnd();
+                                string decryptedIdString = srDecrypt.ReadToEnd();
 
                                 if (int.TryParse(decryptedIdString, out int decryptedId))
                                 {
@@ -58,7 +57,7 @@ namespace Api.Components
                                     {
                                         Id = decryptedId,
                                         status = true,
-                                        message=""
+                                        message = ""
                                     };
                                 }
                                 else
@@ -88,7 +87,7 @@ namespace Api.Components
 
 
         }
-    
+
     }
 
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Api.ViewModels
+﻿namespace Api.ViewModels
 {
     public class ServiceResponse<T>
     {
@@ -24,5 +19,5 @@ namespace Api.ViewModels
         public List<T> Data { get; set; }
     }
 
-   
+
 }

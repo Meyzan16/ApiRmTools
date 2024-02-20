@@ -1,8 +1,6 @@
 ﻿using Api.Components;
 using Api.Models.SQLServer;
-using Api.ViewModels;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace Api.Services
@@ -19,7 +17,7 @@ namespace Api.Services
         private readonly IDecryptManager _decryptManager;
         private readonly dbRmTools_Context _contextData;
 
-        public TokenManager(dbRmTools_Context dbContextSqlServer,IHttpContextAccessor httpContextAccessor, IDecryptManager decryptManager)
+        public TokenManager(dbRmTools_Context dbContextSqlServer, IHttpContextAccessor httpContextAccessor, IDecryptManager decryptManager)
         {
             _context = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _decryptManager = decryptManager;

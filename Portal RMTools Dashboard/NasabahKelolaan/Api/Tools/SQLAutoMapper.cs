@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
+﻿using System.Data.Common;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace Api.Tools
 {

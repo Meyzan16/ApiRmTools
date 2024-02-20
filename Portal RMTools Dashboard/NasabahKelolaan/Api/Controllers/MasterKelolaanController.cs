@@ -5,7 +5,6 @@ using Api.Services;
 using Api.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -43,14 +42,9 @@ namespace Api.Controllers
 
                     if (_.status == true)
                     {
-                        var data = new ServiceResponse<ResponseResultFile>()
-                        {
-                            Data = _.data,
-                        };
 
                         res.Code = 1;
-                        res.Message = "sukses";
-                        res.Data = data;
+                        res.Message = "success";
 
                     }
                     else

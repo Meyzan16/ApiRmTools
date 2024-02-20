@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Api.Models.SQLServer;
+﻿namespace Api.Models.SQLServer;
 
 public partial class TblMasterNavigationAssignment
 {
