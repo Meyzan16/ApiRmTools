@@ -27,7 +27,6 @@ namespace Api.Controllers
 
         #region CREATE
         [Authorize]
-        [DisableCors]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] TblMasterNavigationAssignment req)
         {
@@ -72,7 +71,6 @@ namespace Api.Controllers
 
         #region VIEW
         [Authorize]
-        [DisableCors]
         [HttpPost]
         public async Task<IActionResult> View([FromBody] Id_VM req)
         {
@@ -118,7 +116,6 @@ namespace Api.Controllers
 
         #region DELETE
         [Authorize]
-        [DisableCors]
         [HttpPost]
         public async Task<IActionResult> Delete([FromBody] IdArray_VM req)
         {
@@ -162,7 +159,6 @@ namespace Api.Controllers
 
         #region UPDATE
         [Authorize]
-        [DisableCors]
         [HttpPost]
         public async Task<IActionResult> Update([FromBody] TblMasterNavigationAssignment req)
         {
