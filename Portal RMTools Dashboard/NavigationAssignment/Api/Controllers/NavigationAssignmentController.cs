@@ -202,5 +202,50 @@ namespace Api.Controllers
         }
         #endregion
 
+        #region ACCESSNAVIGATE
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> AccessNavigate([FromBody] Id_VM req)
+        {
+            var DecryptUID = await _tokenManager.GetPrincipal();
+
+            var res = new ServiceResponse<AccessNavigateResponse>();
+            try
+            {
+                if (DecryptUID.status == true)
+                {
+                    var _ = await _executeRepo.AccessNavigateAsync(req.Id);
+
+                    if (_.status == true)
+                    {
+                        res.Code = 1;
+                        res.Message = "sukses";
+                        res.Data = (_.data);
+                    }
+                    else
+                    {
+                        res.Code = -2;
+                        res.Message = _.error;
+                    }
+
+                }
+                else
+                {
+                    res.Code = -2;
+                    res.Message = DecryptUID.error;
+                }
+            }
+            catch (Exception ex)
+            {
+                res.Code = -1;
+                res.Message = ex.Message == null ? ex.InnerException.ToString() : ex.Message.ToString();
+
+            }
+
+            return new OkObjectResult(res);
+
+        }
+        #endregion
+
     }
 }

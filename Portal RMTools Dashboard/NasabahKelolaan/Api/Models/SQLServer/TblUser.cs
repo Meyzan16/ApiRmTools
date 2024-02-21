@@ -1,4 +1,7 @@
-﻿namespace Api.Models.SQLServer;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Api.Models.SQLServer;
 
 public partial class TblUser
 {

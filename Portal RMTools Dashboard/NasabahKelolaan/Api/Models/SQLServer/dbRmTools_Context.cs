@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api.Models.SQLServer;
 
@@ -14,7 +16,6 @@ public partial class dbRmTools_Context : DbContext
     {
         _configuration = configuration;
     }
-
 
     public virtual DbSet<TblJwtRepository> TblJwtRepositories { get; set; }
 
@@ -45,7 +46,6 @@ public partial class dbRmTools_Context : DbContext
             optionsBuilder.UseSqlServer(_configuration.GetConnectionString("dbSqlServer"));
         }
     }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<TblJwtRepository>(entity =>
@@ -253,10 +253,6 @@ public partial class dbRmTools_Context : DbContext
                 .HasColumnName("Deleted_at");
             entity.Property(e => e.DeletedById).HasColumnName("DeletedBy_Id");
             entity.Property(e => e.NavigationId).HasColumnName("Navigation_Id");
-            entity.Property(e => e.RoleId)
-                .HasMaxLength(10)
-                .IsFixedLength()
-                .HasColumnName("Role_Id");
             entity.Property(e => e.UpdatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("Updated_at");

@@ -13,7 +13,7 @@ public partial class TblMasterLookup
 
     public int? Value { get; set; }
 
-    public int? OrdeyBy { get; set; }
+    public int? OrderBy { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 

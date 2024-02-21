@@ -9,7 +9,7 @@ public partial class TblMasterNavigationAssignment
 
     public int? NavigationId { get; set; }
 
-    public string? RoleId { get; set; }
+    public int? UserId { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 
