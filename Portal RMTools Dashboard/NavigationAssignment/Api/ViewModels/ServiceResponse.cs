@@ -23,4 +23,13 @@ namespace Api.ViewModels
         public int recordTotals { get; set; }
         public List<T> Data { get; set; }
     }
+
+    public class AccessNavigateResponse
+    {
+        public int Type { get; set; }
+        public string Name { get; set; }
+        public string Route { get; set; }
+        public int Order { get; set; }
+        public string? IconClass { get; set; }
+    }
 }

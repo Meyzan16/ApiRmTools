@@ -11,6 +11,8 @@ public partial class TblMasterFile
 
     public string? FileSize { get; set; }
 
+    public string? Ext { get; set; }
+
     public string? Path { get; set; }
 
     public string? FullPath { get; set; }

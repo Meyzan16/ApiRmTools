@@ -1,4 +1,7 @@
-﻿namespace Api.Models.SQLServer;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Api.Models.SQLServer;
 
 public partial class TblMasterNavigationAssignment
 {
@@ -6,7 +9,7 @@ public partial class TblMasterNavigationAssignment
 
     public int? NavigationId { get; set; }
 
-    public string? RoleId { get; set; }
+    public int? UserId { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 

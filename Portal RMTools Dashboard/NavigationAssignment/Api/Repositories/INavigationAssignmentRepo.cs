@@ -1,5 +1,8 @@
 ﻿using Api.Models.SQLServer;
 using Api.Services;
+using Api.Tools;
+using Api.ViewModels;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Transactions;
 
@@ -14,6 +17,7 @@ namespace Api.Repositories
 
         Task<(bool status, string error, TblMasterNavigationAssignment data)> ViewAsync(int id);
 
+        Task<(bool status, string error, List<AccessNavigateResponse> data)> AccessNavigateAsync(int userId);
     }
 
     public class NavigationAssignmentRepo : INavigationAssignmentRepo
@@ -153,6 +157,25 @@ namespace Api.Repositories
             catch (Exception ex)
             {
                 return (false, ex.Message.ToString());
+            }
+        }
+        #endregion
+
+        #region AccessNavigate
+        public async Task<(bool status, string error, List<AccessNavigateResponse> data)> AccessNavigateAsync(int userId)
+        {
+            try
+            {
+                var list = await StoredProcedureExecutor.ExecuteSPListAsync<AccessNavigateResponse>
+                    (_context, "[sp_PengaturanAccessMenu]", new SqlParameter[] {
+                           new SqlParameter("@userId", userId)
+                });
+
+                return (true, "", list);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message.ToString(), new List<AccessNavigateResponse>());
             }
         }
         #endregion

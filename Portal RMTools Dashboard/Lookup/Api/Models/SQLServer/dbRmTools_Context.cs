@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.Models.SQLServer;
@@ -103,6 +102,9 @@ public partial class dbRmTools_Context : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("Deleted_at");
             entity.Property(e => e.DeletedById).HasColumnName("DeletedBy_Id");
+            entity.Property(e => e.Ext)
+                .HasMaxLength(50)
+                .HasColumnName("ext");
             entity.Property(e => e.FileName).HasMaxLength(500);
             entity.Property(e => e.FileSize).HasMaxLength(50);
             entity.Property(e => e.FullPath).HasMaxLength(500);
@@ -251,10 +253,6 @@ public partial class dbRmTools_Context : DbContext
                 .HasColumnName("Deleted_at");
             entity.Property(e => e.DeletedById).HasColumnName("DeletedBy_Id");
             entity.Property(e => e.NavigationId).HasColumnName("Navigation_Id");
-            entity.Property(e => e.RoleId)
-                .HasMaxLength(10)
-                .IsFixedLength()
-                .HasColumnName("Role_Id");
             entity.Property(e => e.UpdatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("Updated_at");

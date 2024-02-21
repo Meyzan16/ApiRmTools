@@ -7,6 +7,8 @@ public partial class TblUser
 {
     public int Id { get; set; }
 
+    public string? Nama { get; set; }
+
     public string? Username { get; set; }
 
     public string? Password { get; set; }
@@ -26,4 +28,6 @@ public partial class TblUser
     public string? Uid { get; set; }
 
     public string? SecretKey { get; set; }
+
+    public bool? IsLogin { get; set; }
 }

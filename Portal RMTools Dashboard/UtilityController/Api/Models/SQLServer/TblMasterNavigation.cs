@@ -29,6 +29,8 @@ public partial class TblMasterNavigation
 
     public int? UpdatedById { get; set; }
 
+    public int? DeletedById { get; set; }
+
     public bool? IsDeleted { get; set; }
 
     public string? IconClass { get; set; }
