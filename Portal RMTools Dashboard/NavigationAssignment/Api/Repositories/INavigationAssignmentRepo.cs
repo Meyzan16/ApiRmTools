@@ -143,7 +143,7 @@ namespace Api.Repositories
                 }
 
                 data.NavigationId = req.NavigationId;
-                data.RoleId = req.RoleId;
+                data.UserId = req.UserId;
                 data.UpdatedById = _tokenManager.GetPrincipal().Result.data.Id;
                 data.UpdatedAt = DateTime.Now;
                 data.IsActive = req.IsActive;
