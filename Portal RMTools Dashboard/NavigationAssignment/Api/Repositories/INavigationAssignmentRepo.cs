@@ -17,7 +17,7 @@ namespace Api.Repositories
 
         Task<(bool status, string error, TblMasterNavigationAssignment data)> ViewAsync(int id);
 
-        Task<(bool status, string error, List<AccessNavigateResponse> data)> AccessNavigateAsync(int userId);
+        Task<(bool status, string message, List<AccessNavigateResponse> data)> AccessNavigateAsync(int userId);
     }
 
     public class NavigationAssignmentRepo : INavigationAssignmentRepo
@@ -162,7 +162,7 @@ namespace Api.Repositories
         #endregion
 
         #region AccessNavigate
-        public async Task<(bool status, string error, List<AccessNavigateResponse> data)> AccessNavigateAsync(int userId)
+        public async Task<(bool status, string message, List<AccessNavigateResponse> data)> AccessNavigateAsync(int userId)
         {
             try
             {
@@ -170,8 +170,16 @@ namespace Api.Repositories
                     (_context, "[sp_PengaturanAccessMenu]", new SqlParameter[] {
                            new SqlParameter("@userId", userId)
                 });
+                if(list == null)
+                {
+                return (false, "Not found data", list);
 
+                }
+                else
+                {
                 return (true, "", list);
+                }
+
             }
             catch (Exception ex)
             {

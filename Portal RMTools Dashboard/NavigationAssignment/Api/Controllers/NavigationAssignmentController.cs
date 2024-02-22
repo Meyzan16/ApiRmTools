@@ -204,8 +204,8 @@ namespace Api.Controllers
 
         #region ACCESSNAVIGATE
         [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> AccessNavigate([FromBody] Id_VM req)
+        [HttpGet]
+        public async Task<IActionResult> AccessNavigate()
         {
             var DecryptUID = await _tokenManager.GetPrincipal();
 
@@ -214,18 +214,18 @@ namespace Api.Controllers
             {
                 if (DecryptUID.status == true)
                 {
-                    var _ = await _executeRepo.AccessNavigateAsync(req.Id);
+                    var result = await _executeRepo.AccessNavigateAsync(DecryptUID.data.Id);
 
-                    if (_.status == true)
+                    if (result.status == true)
                     {
                         res.Code = 1;
-                        res.Message = "sukses";
-                        res.Data = (_.data);
+                        res.Message = result.message;
+                        res.Data = (result.data);
                     }
                     else
                     {
                         res.Code = -2;
-                        res.Message = _.error;
+                        res.Message = result.message;
                     }
 
                 }
