@@ -18,6 +18,10 @@ namespace Api.Repositories
         Task<(bool status, string error, TblMasterNavigationAssignment data)> ViewAsync(int id);
 
         Task<(bool status, string message, List<AccessNavigateResponse> data)> AccessNavigateAsync(int userId);
+
+        Task<(bool status, string error, List<DataTableRes_VM> data, int recordTotals)>
+         LoadDataAsync(string sortColumn, string sortColumnDir, int pageNumber,
+             int pageSize, string NamaMenu, string NamaUser);
     }
 
     public class NavigationAssignmentRepo : INavigationAssignmentRepo
@@ -184,6 +188,43 @@ namespace Api.Repositories
             catch (Exception ex)
             {
                 return (false, ex.Message.ToString(), new List<AccessNavigateResponse>());
+            }
+        }
+        #endregion
+
+        #region LOADDATA
+        public async Task<(bool status, string error, List<DataTableRes_VM> data, int recordTotals)> LoadDataAsync(string sortColumn, string sortColumnDir, int pageNumber,
+                int pageSize, string NamaMenu, string NamaUser)
+        {
+            try
+            {
+                sortColumn = sortColumn == "" ? null : sortColumn;
+                sortColumnDir = sortColumnDir == "" ? null : sortColumnDir;
+                NamaMenu = NamaMenu == "" ? null : NamaMenu;
+                NamaUser = NamaUser == "" ? null : NamaUser;
+
+                var list = await StoredProcedureExecutor.ExecuteSPListAsync<DataTableRes_VM>
+                    (_context, "[sp_NavigationAssignment_view]", new SqlParameter[] {
+                           new SqlParameter("@PageNumber", pageNumber),
+                           new SqlParameter("@RowsPage", pageSize),
+                           new SqlParameter("@sortColumn", sortColumn),
+                           new SqlParameter("@sortColumnDir", sortColumnDir),
+
+                           new SqlParameter("@NamaMenu", NamaMenu),
+                           new SqlParameter("@NamaUser", NamaUser)
+                });
+
+                var recordsTotal = StoredProcedureExecutor.ExecuteScalarInt
+                    (_context, "[sp_NavigationAssignment_count]", new SqlParameter[] {
+                           new SqlParameter("@NamaMenu", NamaMenu),
+                           new SqlParameter("@NamaUser", NamaUser)
+                });
+
+                return (true, "", list, recordsTotal);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message.ToString(), new List<DataTableRes_VM>(), 0);
             }
         }
         #endregion

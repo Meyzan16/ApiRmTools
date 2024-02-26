@@ -247,5 +247,46 @@ namespace Api.Controllers
         }
         #endregion
 
+        #region LOADDATA
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> LoadData([FromBody] DataTableReq_VM req)
+        {
+            var res = new ServiceResponseSingle<ServiceResponseDataTable<DataTableRes_VM>>();
+            try
+            {
+                var _ = await _executeRepo.LoadDataAsync(req.sortColumn, req.sortColumnDir, req.pageNumber, req.pageSize, req.NamaMenu, req.NamaUser);
+
+                if (_.status == true)
+                {
+                    var data = new ServiceResponseDataTable<DataTableRes_VM>()
+                    {
+                        Data = _.data,
+                        recordTotals = _.recordTotals
+                    };
+
+                    res.Code = 1;
+                    res.Message = "sukses";
+                    res.Data = data;
+                }
+                else
+                {
+                    res.Code = -2;
+                    res.Message = _.error;
+                }
+            }
+            catch (Exception ex)
+            {
+                res.Code = -1;
+                res.Message = ex.Message == null ? ex.InnerException.ToString() : ex.Message.ToString();
+            }
+
+            return new OkObjectResult(res);
+
+        }
+        #endregion
+
+
+
     }
 }
