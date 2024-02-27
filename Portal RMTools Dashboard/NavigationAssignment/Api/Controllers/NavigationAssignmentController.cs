@@ -255,24 +255,34 @@ namespace Api.Controllers
             var res = new ServiceResponseSingle<ServiceResponseDataTable<DataTableRes_VM>>();
             try
             {
-                var _ = await _executeRepo.LoadDataAsync(req.sortColumn, req.sortColumnDir, req.pageNumber, req.pageSize, req.NamaMenu, req.NamaUser);
+                var DecryptUID = await _tokenManager.GetPrincipal();
 
-                if (_.status == true)
+                if (DecryptUID.status == true)
                 {
-                    var data = new ServiceResponseDataTable<DataTableRes_VM>()
-                    {
-                        Data = _.data,
-                        recordTotals = _.recordTotals
-                    };
+                    var _ = await _executeRepo.LoadDataAsync(req.sortColumn, req.sortColumnDir, req.pageNumber, req.pageSize, req.NamaMenu, req.NamaUser);
 
-                    res.Code = 1;
-                    res.Message = "sukses";
-                    res.Data = data;
+                    if (_.status == true)
+                    {
+                        var data = new ServiceResponseDataTable<DataTableRes_VM>()
+                        {
+                            Data = _.data,
+                            recordTotals = _.recordTotals
+                        };
+
+                        res.Code = 1;
+                        res.Message = "sukses";
+                        res.Data = data;
+                    }
+                    else
+                    {
+                        res.Code = -2;
+                        res.Message = _.error;
+                    }
                 }
                 else
                 {
                     res.Code = -2;
-                    res.Message = _.error;
+                    res.Message = DecryptUID.error;
                 }
             }
             catch (Exception ex)

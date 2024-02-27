@@ -216,24 +216,34 @@ namespace Api.Controllers
             var res = new ServiceResponseSingle<ServiceResponseDataTable<NavigationRes_VM>>();
             try
             {
-                var _ = await _news_Repo.LoadDataAsync(req.sortColumn, req.sortColumnDir, req.pageNumber, req.pageSize, req.Name, req.Type, req.Parent);
-
-                if (_.status == true)
+                var DecryptUID = await _tokenManager.GetPrincipal();
+                if (DecryptUID.status == true)
                 {
-                    var data = new ServiceResponseDataTable<NavigationRes_VM>()
-                    {
-                        Data = _.data,
-                        recordTotals = _.recordTotals
-                    };
 
-                    res.Code = 1;
-                    res.Message = "sukses";
-                    res.Data = data;
+                    var _ = await _news_Repo.LoadDataAsync(req.sortColumn, req.sortColumnDir, req.pageNumber, req.pageSize, req.Name, req.Type, req.Parent);
+
+                    if (_.status == true)
+                    {
+                        var data = new ServiceResponseDataTable<NavigationRes_VM>()
+                        {
+                            Data = _.data,
+                            recordTotals = _.recordTotals
+                        };
+
+                        res.Code = 1;
+                        res.Message = "sukses";
+                        res.Data = data;
+                    }
+                    else
+                    {
+                        res.Code = -2;
+                        res.Message = _.error;
+                    }
                 }
                 else
                 {
                     res.Code = -2;
-                    res.Message = _.error;
+                    res.Message = DecryptUID.error;
                 }
             }
             catch (Exception ex)
