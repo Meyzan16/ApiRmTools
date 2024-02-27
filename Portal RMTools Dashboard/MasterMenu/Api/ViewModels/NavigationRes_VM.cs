@@ -14,7 +14,6 @@ namespace Api.ViewModels
         public string Route { get; set; }
         public int? OrderBy { get; set; }
         public int IsVisible { get; set; }
-
         public int? ParentId { get; set; }
         public string Parent { get; set; }
         public string Visible_Name { get; set; }

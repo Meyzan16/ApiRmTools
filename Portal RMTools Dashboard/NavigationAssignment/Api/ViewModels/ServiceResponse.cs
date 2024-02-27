@@ -31,5 +31,6 @@ namespace Api.ViewModels
         public string Route { get; set; }
         public int Order { get; set; }
         public string? IconClass { get; set; }
+        public string Parent { get; set; }
     }
 }
