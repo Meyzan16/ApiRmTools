@@ -15,7 +15,7 @@ namespace Api.Repositories
         Task<(bool status, string error)> DeleteAsync(int[] ids);
         Task<(bool status, string error)> UpdateAsync(TblMasterNavigationAssignment req);
 
-        Task<(bool status, string error, TblMasterNavigationAssignment data)> ViewAsync(int id);
+        Task<(bool status, string error, DataTableRes_VM data)> ViewAsync(int id);
 
         Task<(bool status, string message, List<AccessNavigateResponse> data)> AccessNavigateAsync(int userId);
 
@@ -63,27 +63,30 @@ namespace Api.Repositories
         #endregion
 
         #region View
-        public async Task<(bool status, string error, TblMasterNavigationAssignment data)>
+        public async Task<(bool status, string error, DataTableRes_VM data)>
             ViewAsync(int id)
         {
             try
             {
                 if (id == 0)
                 {
-                    return (false, "Request Id Not found", new TblMasterNavigationAssignment());
+                    return (false, "Request Id Not found", new DataTableRes_VM());
                 }
-                var _ = await _context.TblMasterNavigationAssignments.Where(x => x.Id == id).FirstOrDefaultAsync();
+
+                var _ = await StoredProcedureExecutor.ExecuteSPSingleAsync<DataTableRes_VM>(_context, "[sp_NavigationAssignment_detail]", new SqlParameter[] {
+                               new SqlParameter("@Id", id),
+                });
 
                 if (_ == null)
                 {
-                    return (false, "Id not found", new TblMasterNavigationAssignment());
+                    return (false, "Id not found", new DataTableRes_VM());
                 }
 
                 return (true, "", _);
             }
             catch (Exception ex)
             {
-                return (false, ex.Message.ToString(), new TblMasterNavigationAssignment());
+                return (false, ex.Message.ToString(), new DataTableRes_VM());
             }
         }
         #endregion
@@ -146,8 +149,8 @@ namespace Api.Repositories
                     return (false, "Id not found in database");
                 }
 
-                data.NavigationId = req.NavigationId;
-                data.UserId = req.UserId;
+                data.NavigationId = req.NavigationId; //Id Master Menu
+                data.UserId = req.UserId; //Id User
                 data.UpdatedById = _tokenManager.GetPrincipal().Result.data.Id;
                 data.UpdatedAt = DateTime.Now;
                 data.IsActive = req.IsActive;

@@ -7,7 +7,7 @@ namespace Api.ViewModels
 {
     public class DataTableRes_VM
     {
-        public Int64 Number { get; set; }
+        public Int64? Number { get; set; }
         public int Id { get; set; }
         public string NamaMenu { get; set; }
         public string NamaRole { get; set; }

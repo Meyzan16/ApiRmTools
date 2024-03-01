@@ -76,7 +76,7 @@ namespace Api.Controllers
         {
             var DecryptUID = await _tokenManager.GetPrincipal();
 
-            var res = new ServiceResponseSingle<TblMasterNavigationAssignment>();
+            var res = new ServiceResponseSingle<DataTableRes_VM>();
             try
             {
                 if (DecryptUID.status == true)
