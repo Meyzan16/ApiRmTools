@@ -16,7 +16,7 @@ namespace Api.Repositories
         Task<(bool status, string error)> DeleteAsync(int[] ids);
         Task<(bool status, string error)> UpdateAsync(TblMasterNavigation req);
 
-        Task<(bool status, string error, TblMasterNavigation data)> ViewAsync(int id);
+        Task<(bool status, string error, NavigationRes_VM data)> ViewAsync(int id);
 
         Task<(bool status, string error, List<NavigationRes_VM> data, int recordTotals)>
            LoadDataAsync(string sortColumn, string sortColumnDir, int pageNumber,
@@ -112,27 +112,31 @@ namespace Api.Repositories
         #endregion
 
         #region View
-        public async Task<(bool status, string error, TblMasterNavigation data)>
+        public async Task<(bool status, string error, NavigationRes_VM data)>
             ViewAsync(int id)
         {
             try
             {
                 if (id == 0)
                 {
-                    return (false, "Request Id Not found", new TblMasterNavigation());
+                    return (false, "Request Id Not found", new NavigationRes_VM());
                 }
-                var _ = await _context.TblMasterNavigations.Where(x => x.Id == id).FirstOrDefaultAsync();
+
+                var _ = await StoredProcedureExecutor.ExecuteSPSingleAsync<NavigationRes_VM>(_context, "[sp_PengaturanMenu_Detail]", new SqlParameter[] {
+                               new SqlParameter("@Id", id),
+                });
+
 
                 if (_ == null)
                 {
-                    return (false, "Id not found", new TblMasterNavigation());
+                    return (false, "Id not found", new NavigationRes_VM());
                 }
 
                 return (true, "", _);
             }
             catch (Exception ex)
             {
-                return (false, ex.Message.ToString(), new TblMasterNavigation());
+                return (false, ex.Message.ToString(), new NavigationRes_VM());
             }
         }
         #endregion

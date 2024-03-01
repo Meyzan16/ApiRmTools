@@ -124,7 +124,7 @@ namespace Api.Controllers
         {
             var DecryptUID = await _tokenManager.GetPrincipal();
 
-            var res = new ServiceResponseSingle<TblMasterNavigation>();
+            var res = new ServiceResponseSingle<NavigationRes_VM>();
             try
             {
                 if (DecryptUID.status == true)
