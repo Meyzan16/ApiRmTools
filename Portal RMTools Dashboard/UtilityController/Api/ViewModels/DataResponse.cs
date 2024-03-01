@@ -23,6 +23,12 @@
         public int PegawaiLoginId { get; set; }
     }
 
+    public class DropdownMasterMenu_VM
+    {
+        public int Id { get; set;}
+        public string Name { get; set;}
+    }
+
  
 
 }

@@ -320,6 +320,96 @@ namespace Api.Controllers
             return new OkObjectResult(res);
         }
         #endregion
+
+        #region Dropdown Menu
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> DropdownMasterMenu()
+        {
+            var res = new ServiceResponse<DropdownMasterMenu_VM>();
+
+            try
+            {
+                var DecryptUID = await _tokenManager.GetPrincipal();
+
+                if (DecryptUID.status == true)
+                {
+                    var result =  await _context.TblMasterNavigations.Where(x => x.Type == 2).Select(x => new DropdownMasterMenu_VM { Id = x.Id, Name = x.Name }) .ToListAsync();
+
+                    if (result != null)
+                    {
+                        res.Code = 1;
+                        res.Message = "sukses";
+                        res.Data = result;
+                    }
+                    else
+                    {
+                        res.Code = -2;
+                        res.Message = "Data not found";
+                    }
+
+                }
+                else
+                {
+                    res.Code = -2;
+                    res.Message = DecryptUID.error;
+                }
+            }
+            catch (Exception ex)
+            {
+                res.Code = -1;
+                res.Message = ex.Message == null ? ex.InnerException.ToString() : ex.Message.ToString();
+
+            }
+
+            return new OkObjectResult(res);
+        }
+        #endregion
+
+        #region Dropdown User
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> DropdownUser()
+        {
+            var res = new ServiceResponse<DropdownMasterMenu_VM>();
+
+            try
+            {
+                var DecryptUID = await _tokenManager.GetPrincipal();
+
+                if (DecryptUID.status == true)
+                {
+                    var result = await _context.TblUsers.Select(x => new DropdownMasterMenu_VM { Id = x.Id, Name = x.Nama }).ToListAsync();
+
+                    if (result != null)
+                    {
+                        res.Code = 1;
+                        res.Message = "sukses";
+                        res.Data = result;
+                    }
+                    else
+                    {
+                        res.Code = -2;
+                        res.Message = "Data not found";
+                    }
+
+                }
+                else
+                {
+                    res.Code = -2;
+                    res.Message = DecryptUID.error;
+                }
+            }
+            catch (Exception ex)
+            {
+                res.Code = -1;
+                res.Message = ex.Message == null ? ex.InnerException.ToString() : ex.Message.ToString();
+
+            }
+
+            return new OkObjectResult(res);
+        }
+        #endregion
     }
 
 }
