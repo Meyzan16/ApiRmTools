@@ -410,6 +410,46 @@ namespace Api.Controllers
             return new OkObjectResult(res);
         }
         #endregion
-    }
 
+        #region Dropdown Lookup
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> DropdownLookup()
+        {
+            var res = new ServiceResponse<DropdownMasterMenu_VM>();
+
+            try
+            {
+                var DecryptUID = await _tokenManager.GetPrincipal();
+
+                if (DecryptUID.status == true)
+                {
+                    var result = await _context.TblMasterLookups
+                            .Where(x => x.IsDeleted != true)
+                            .Select(x => new DropdownMasterMenu_VM { Id = x.Id, Name = x.Name})
+                            .ToListAsync();
+
+                    if (result != null)
+                    {
+                        res.Code = 1;
+                        res.Message = "sukses";
+                        res.Data = result;
+                    }
+                    else
+                    {
+                        res.Code = -2;
+                        res.Message = "Data not found";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                res.Code = -1;
+                res.Message = ex.Message == null ? ex.InnerException.ToString() : ex.Message.ToString();
+            }
+
+            return new OkObjectResult(res);
+        }
+        #endregion
+    }
 }
