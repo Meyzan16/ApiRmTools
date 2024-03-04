@@ -1,0 +1,11 @@
+File Upload tagging debitur kelolaan akan dibaca dan di validasi dengan rules
+- duplicate CIF
+- NPP sama pada 3 roles (RM, SRM, RM FUNDING)
+- Format isi NPP (5 digit)
+- CIF harus memiliki pengelola di salah satu roles 
+- setiap roles tidak boleh lebih dari 1
+
+Ada log auditrail perubahan kelolaan debitur
+
+
+dotnet core 8, db connection oracle dan sql server

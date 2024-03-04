@@ -334,7 +334,7 @@ namespace Api.Controllers
 
                 if (DecryptUID.status == true)
                 {
-                    var result =  await _context.TblMasterNavigations.Where(x => x.Type == 2).Select(x => new DropdownMasterMenu_VM { Id = x.Id, Name = x.Name }) .ToListAsync();
+                    var result =  await _context.TblMasterNavigations.Where(x => x.Type == 2 && x.IsDeleted != true).Select(x => new DropdownMasterMenu_VM { Id = x.Id, Name = x.Name }) .ToListAsync();
 
                     if (result != null)
                     {
@@ -379,7 +379,7 @@ namespace Api.Controllers
 
                 if (DecryptUID.status == true)
                 {
-                    var result = await _context.TblUsers.Select(x => new DropdownMasterMenu_VM { Id = x.Id, Name = x.Nama }).ToListAsync();
+                    var result = await _context.TblUsers.Where(x => x.IsActive != true).Select(x => new DropdownMasterMenu_VM { Id = x.Id, Name = x.Nama }).ToListAsync();
 
                     if (result != null)
                     {
