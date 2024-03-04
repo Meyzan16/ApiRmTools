@@ -425,7 +425,7 @@ namespace Api.Controllers
                 if (DecryptUID.status == true)
                 {
                     var result = await _context.TblMasterLookups
-                            .Where(x => x.IsDeleted != true)
+                            .Where(x => x.IsDeleted != true && x.Type == "TypeMenu")
                             .Select(x => new DropdownMasterMenu_VM { Id = x.Id, Name = x.Name})
                             .ToListAsync();
 
