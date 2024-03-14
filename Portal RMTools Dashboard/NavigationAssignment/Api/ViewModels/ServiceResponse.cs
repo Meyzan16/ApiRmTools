@@ -26,11 +26,24 @@ namespace Api.ViewModels
 
     public class AccessNavigateResponse
     {
-        public int Type { get; set; }
+        public int Id { get; set; }
+        public int? Type { get; set; }
         public string Name { get; set; }
         public string Route { get; set; }
-        public int Order { get; set; }
+        public int? Order { get; set; }
         public string? IconClass { get; set; }
-        public string Parent { get; set; }
+        public int? ParentNavigationId { get; set; }
+
+        public List<Tbl_Mapping_chil> Childrens { get; set; }
     }
+
+    public class Tbl_Mapping_chil
+    {
+        public int? Type { get; set; }
+        public string Name { get; set; }
+        public string Route { get; set; }
+        public int? Order { get; set; }
+        public string? IconClass { get; set; }
+    }
+
 }

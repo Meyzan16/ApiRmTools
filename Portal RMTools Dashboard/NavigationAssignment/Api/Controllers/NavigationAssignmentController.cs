@@ -210,6 +210,7 @@ namespace Api.Controllers
             var DecryptUID = await _tokenManager.GetPrincipal();
 
             var res = new ServiceResponse<AccessNavigateResponse>();
+
             try
             {
                 if (DecryptUID.status == true)

@@ -173,18 +173,84 @@ namespace Api.Repositories
         {
             try
             {
-                var list = await StoredProcedureExecutor.ExecuteSPListAsync<AccessNavigateResponse>
-                    (_context, "[sp_PengaturanAccessMenu]", new SqlParameter[] {
-                           new SqlParameter("@userId", userId)
-                });
+                //var list = await StoredProcedureExecutor.ExecuteSPListAsync<AccessNavigateResponse>
+                //    (_context, "[sp_PengaturanAccessMenu]", new SqlParameter[] {
+                //           new SqlParameter("@userId", userId)
+                //});
+
+                var result = new List<AccessNavigateResponse>();
+
+                var list = await _context.TblMasterNavigationAssignments.Where(x => x.UserId == userId).ToListAsync();
+
                 if(list == null)
                 {
-                return (false, "Not found data", list);
-
+                    return (false, "Navigation menu not access", new List<AccessNavigateResponse>());
                 }
                 else
                 {
-                return (true, "", list);
+
+                    foreach (var item in list)
+                    {
+                        var mappingResult = new List<Tbl_Mapping_chil>();
+
+                        var checkparent = await _context.TblMasterNavigations.Where(x => x.Id == item.NavigationId).FirstOrDefaultAsync();
+
+                        //decision parent
+                        if(checkparent.ParentNavigationId != 0)
+                        {
+                            //get parent
+                            var parent = await _context.TblMasterNavigations.Where(x => x.Id == checkparent.ParentNavigationId).FirstOrDefaultAsync();
+
+                            //if then parent already not create
+                            var parentUtama = result.FirstOrDefault(p =>  p.Id == parent.Id);
+                            if (parentUtama == null)
+                            {
+                                parentUtama = new AccessNavigateResponse
+                                {
+                                    Type = parent.Type,
+                                    Name = parent.Name,
+                                    Route = parent.Route,
+                                    Order = parent.Order,
+                                    IconClass = parent.IconClass,
+                                    ParentNavigationId = checkparent.ParentNavigationId,
+                                    Childrens = new List<Tbl_Mapping_chil>()
+                                };
+                                result.Add(parentUtama);
+                            }
+
+                            //mapping childrens
+                            parentUtama.Childrens.Add(new Tbl_Mapping_chil
+                            {
+                                Type = checkparent.Type,
+                                Name = checkparent.Name,
+                                Route = checkparent.Route,
+                                Order = checkparent.Order,
+                                IconClass = checkparent.IconClass,
+                            });
+                  
+                        }
+                        else
+                        {
+                            var _ = new AccessNavigateResponse
+                            {
+                                Id = checkparent.Id,
+                                Type = checkparent.Type,
+                                Name = checkparent.Name,
+                                Route = checkparent.Route,
+                                Order = checkparent.Order,
+                                IconClass = checkparent.IconClass,
+                                Childrens = new List<Tbl_Mapping_chil>()
+                            };
+                            result.Add(_);
+                        }
+
+
+
+                      
+
+                    }
+
+                        return (true, "success", result);
                 }
 
             }
