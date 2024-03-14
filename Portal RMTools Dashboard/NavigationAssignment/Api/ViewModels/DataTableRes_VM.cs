@@ -17,8 +17,7 @@ namespace Api.ViewModels
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
         public string DeletedBy { get; set; }
-        public string ActiveByRole { get; set; }
-        public string IsDeleteByMenu { get; set; }
+        public string ActiveByUser { get; set; }
 
 
     }
