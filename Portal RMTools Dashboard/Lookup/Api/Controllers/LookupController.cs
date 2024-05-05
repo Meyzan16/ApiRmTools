@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
+using System.Net.Http.Headers;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 
 namespace Api.Controllers
 {
@@ -31,42 +35,54 @@ namespace Api.Controllers
         #region CREATE
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] TblMasterLookup req)
+        public async Task<IActionResult> Create([FromBody] RequestCreated req)
         {
             var DecryptUID = await _tokenManager.GetPrincipal();
-
             var res = new ServiceResponseSingle<TblMasterNavigationAssignment>();
+            var activity = new TblLogActivity();
             try
             {
-                if (DecryptUID.status == true)
-                {
-                    var _ = await _executeRepo.CreateAsync(req);
+                        if (DecryptUID.status == true)
+                        {
+                            
+                            var _ = await _executeRepo.CreateAsync(req);
 
-                    if (_.status == true)
-                    {
-                        res.Code = 1;
-                        res.Message = "Created successfully";
-                    }
-                    else
-                    {
-                        res.Code = -2;
-                        res.Message = _.error;
-                    }
-
-                }
-                else
-                {
-                    res.Code = -2;
-                    res.Message = DecryptUID.error;
-                }
+                            if (_.status == true)
+                            {
+                                res.Code = 201;
+                                res.Message = "Created successfully";
+                                activity.Status = "success";
+                                activity.Message = res.Message;
+                            }
+                            else
+                            {
+                                res.Code = 400;
+                                res.Message = _.error;
+                                activity.Status = "error";
+                                activity.Message = res.Message;
+                            }
+                        }
+                        else
+                        {
+                            res.Code = 400;
+                            res.Message = DecryptUID.error;
+                            activity.Status = "error";
+                            activity.Message = res.Message;
+                        }
             }
             catch (Exception ex)
             {
-                res.Code = -1;
+                res.Code = 500;
                 res.Message = ex.Message == null ? ex.InnerException.ToString() : ex.Message.ToString();
+                activity.Status = "Catch";
+                activity.Message = res.Message;
 
             }
 
+            //private penyimpanan activity
+            await LogActivity(nameof(LookupController), nameof(Create), activity.Status, activity.Message, DecryptUID.data.Id);
+
+            HttpContext.Response.ContentType = "application/json";
             return new OkObjectResult(res);
 
         }
@@ -78,8 +94,8 @@ namespace Api.Controllers
         public async Task<IActionResult> View([FromBody] Id_VM req)
         {
             var DecryptUID = await _tokenManager.GetPrincipal();
-
             var res = new ServiceResponseSingle<TblMasterLookup>();
+            var activity = new TblLogActivity();
             try
             {
                 if (DecryptUID.status == true)
@@ -91,11 +107,15 @@ namespace Api.Controllers
                         res.Code = 1;
                         res.Message = "Success";
                         res.Data = (_.data);
+                        activity.Status = "success";
+                        activity.Message = res.Message;
                     }
                     else
                     {
                         res.Code = -2;
                         res.Message = _.error;
+                        activity.Status = "error";
+                        activity.Message = res.Message;
                     }
 
                 }
@@ -103,15 +123,23 @@ namespace Api.Controllers
                 {
                     res.Code = -2;
                     res.Message = DecryptUID.error;
+                    activity.Status = "error";
+                    activity.Message = res.Message;
                 }
             }
             catch (Exception ex)
             {
                 res.Code = -1;
                 res.Message = ex.Message == null ? ex.InnerException.ToString() : ex.Message.ToString();
+                activity.Status = "Catch";
+                activity.Message = res.Message;
 
             }
 
+            //private penyimpanan activity
+            await LogActivity(nameof(LookupController), nameof(View), activity.Status, activity.Message, DecryptUID.data.Id);
+
+            HttpContext.Response.ContentType = "application/json";
             return new OkObjectResult(res);
 
         }
@@ -123,8 +151,9 @@ namespace Api.Controllers
         public async Task<IActionResult> Delete([FromBody] IdArray_VM req)
         {
             var DecryptUID = await _tokenManager.GetPrincipal();
-
             var res = new ServiceResponseSingle<string>();
+            var activity = new TblLogActivity();
+
             try
             {
                 if (DecryptUID.status == true)
@@ -135,11 +164,15 @@ namespace Api.Controllers
                     {
                         res.Code = 1;
                         res.Message = "Deleted successfully";
+                        activity.Status = "success";
+                        activity.Message = res.Message;
                     }
                     else
                     {
                         res.Code = -2;
                         res.Message = _.error;
+                        activity.Status = "error";
+                        activity.Message = res.Message;
                     }
 
                 }
@@ -147,16 +180,25 @@ namespace Api.Controllers
                 {
                     res.Code = -2;
                     res.Message = DecryptUID.error;
+                    activity.Status = "error";
+                    activity.Message = res.Message;
                 }
             }
             catch (Exception ex)
             {
                 res.Code = -1;
                 res.Message = ex.Message == null ? ex.InnerException.ToString() : ex.Message.ToString();
+                activity.Status = "Catch";
+                activity.Message = res.Message;
 
             }
 
+            //private penyimpanan activity
+            await LogActivity(nameof(LookupController), nameof(Delete), activity.Status, activity.Message, DecryptUID.data.Id);
+
+            HttpContext.Response.ContentType = "application/json";
             return new OkObjectResult(res);
+
         }
         #endregion
 
@@ -166,8 +208,8 @@ namespace Api.Controllers
         public async Task<IActionResult> Update([FromBody] TblMasterLookup req)
         {
             var DecryptUID = await _tokenManager.GetPrincipal();
-
             var res = new ServiceResponseSingle<string>();
+            var activity = new TblLogActivity();
             try
             {
                 if (DecryptUID.status == true)
@@ -178,11 +220,15 @@ namespace Api.Controllers
                     {
                         res.Code = 1;
                         res.Message = "Updated Successfully";
+                        activity.Status = "success";
+                        activity.Message = res.Message;
                     }
                     else
                     {
                         res.Code = -2;
                         res.Message = _.error;
+                        activity.Status = "error";
+                        activity.Message = res.Message;
                     }
 
                 }
@@ -190,6 +236,8 @@ namespace Api.Controllers
                 {
                     res.Code = -2;
                     res.Message = DecryptUID.error;
+                    activity.Status = "error";
+                    activity.Message = res.Message;
                 }
 
             }
@@ -197,9 +245,14 @@ namespace Api.Controllers
             {
                 res.Code = -1;
                 res.Message = ex.Message == null ? ex.InnerException.ToString() : ex.Message.ToString();
+                activity.Status = "Catch";
+                activity.Message = res.Message;
             }
 
+            //private penyimpanan activity
+            await LogActivity(nameof(LookupController), nameof(Update), activity.Status, activity.Message, DecryptUID.data.Id);
 
+            HttpContext.Response.ContentType = "application/json";
             return new OkObjectResult(res);
 
         }
@@ -248,10 +301,30 @@ namespace Api.Controllers
                 res.Message = ex.Message == null ? ex.InnerException.ToString() : ex.Message.ToString();
             }
 
+            HttpContext.Response.ContentType = "application/json";
             return new OkObjectResult(res);
 
         }
         #endregion
+
+        private async Task LogActivity(string controllerName, string actionName, string status, string message, int userId)
+        {
+            // Perform logging logic here, such as saving the activity to the database
+            var save = new TblLogActivity
+            {
+                UserId = userId,
+                Path = $"{controllerName}/{actionName}",
+                Status = status,
+                Message = message,
+                ActionTime = DateTime.Now,
+                Browser = Request.Headers["User-Agent"]
+            };
+
+            // Simpan aktivitas ke database
+            await _context.TblLogActivities.AddAsync(save);
+            await _context.SaveChangesAsync();
+
+        }
 
     }
 

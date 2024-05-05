@@ -9,7 +9,11 @@ public partial class TblLogActivity
 
     public int? UserId { get; set; }
 
-    public string? Url { get; set; }
+    public string? Path { get; set; }
+
+    public string? Status { get; set; }
+
+    public string? Message { get; set; }
 
     public DateTime? ActionTime { get; set; }
 
@@ -20,6 +24,4 @@ public partial class TblLogActivity
     public string? Os { get; set; }
 
     public string? ClientInfo { get; set; }
-
-    public string? Keterangan { get; set; }
 }

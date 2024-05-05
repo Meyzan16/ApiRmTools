@@ -11,7 +11,7 @@ namespace Api.Repositories
 {
     public interface IMasterLookupRepo
     {
-        Task<(bool status, string error)> CreateAsync(TblMasterLookup req);
+        Task<(bool status, string error)> CreateAsync(RequestCreated req);
 
         Task<(bool status, string error)> DeleteAsync(int[] ids);
         Task<(bool status, string error)> UpdateAsync(TblMasterLookup req);
@@ -34,7 +34,7 @@ namespace Api.Repositories
             _context = context;
         }
         #region CREATE
-        public async Task<(bool status, string error)> CreateAsync(TblMasterLookup req)
+        public async Task<(bool status, string error)> CreateAsync(RequestCreated req)
         {
             try
             {
@@ -43,13 +43,27 @@ namespace Api.Repositories
                     return (false, "Request not found");
                 }
 
-                req.IsDeleted = false;
-                req.CreatedById = _tokenManager.GetPrincipal().Result.data.Id;
-                req.CreatedAt = DateTime.Now;
-                req.DeletedAt = null;
-                req.UpdatedAt = null;
+                //decision cek value dengan type yang sama
+                bool existing = await _context.TblMasterLookups.AnyAsync(x => x.Type == req.Type && x.Value == req.Value);
 
-                await _context.TblMasterLookups.AddAsync(req);
+                if (existing)
+                {
+                    return (false, $"Type {req.Name} is value existing");
+                }
+
+                var OrderBy = await _context.TblMasterLookups.OrderByDescending(x => x.OrderBy).Select(x => x.OrderBy).FirstOrDefaultAsync();
+
+                var TblLookup = new TblMasterLookup();
+
+                TblLookup.Type = req.Type;
+                TblLookup.Name = req.Name;
+                TblLookup.Value = req.Value;
+                TblLookup.OrderBy = OrderBy != null ?  OrderBy + 1 : 1;
+                TblLookup.CreatedById = _tokenManager.GetPrincipal().Result.data.Id;
+                TblLookup.CreatedAt = DateTime.Now;
+                TblLookup.IsDeleted = false;
+
+                await _context.TblMasterLookups.AddAsync(TblLookup);
                 await _context.SaveChangesAsync();
 
                 return (true, "");

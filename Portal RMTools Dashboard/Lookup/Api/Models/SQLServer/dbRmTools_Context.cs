@@ -10,8 +10,9 @@ public partial class dbRmTools_Context : DbContext
     {
         _configuration = configuration;
     }
+
     private readonly IConfiguration _configuration;
-    public dbRmTools_Context(IConfiguration configuration, DbContextOptions<dbRmTools_Context> options)
+    public dbRmTools_Context(DbContextOptions<dbRmTools_Context> options, IConfiguration configuration)
         : base(options)
     {
         _configuration = configuration;
@@ -64,6 +65,7 @@ public partial class dbRmTools_Context : DbContext
 
             entity.Property(e => e.ActionTime).HasColumnType("datetime");
             entity.Property(e => e.Ip).HasColumnName("IP");
+            entity.Property(e => e.Message).HasColumnType("text");
             entity.Property(e => e.Os).HasColumnName("OS");
         });
 

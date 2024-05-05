@@ -29,7 +29,6 @@ namespace Api.Services
         {
             try
             {
-
                 string authorization = _context.HttpContext.Request.Headers["Authorization"];
                 if (authorization != null)
                 {
@@ -50,13 +49,13 @@ namespace Api.Services
                     }
                     else
                     {
-                        return (false, "Decrypt UID Not Match", new TblUser());
+                        return (false, "User data decryption not found", new TblUser());
                     }
                 }
 
                 else
                 {
-                    return (false, "Authrization not found", new TblUser());
+                    return (false, "Access is not permitted", new TblUser());
                 }
             }
             catch (Exception ex)
