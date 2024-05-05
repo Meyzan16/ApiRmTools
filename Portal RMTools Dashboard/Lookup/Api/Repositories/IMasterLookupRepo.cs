@@ -43,21 +43,14 @@ namespace Api.Repositories
                     return (false, "Request not found");
                 }
 
-                //decision cek value dengan type yang sama
-                bool existing = await _context.TblMasterLookups.AnyAsync(x => x.Type == req.Type && x.Value == req.Value);
-
-                if (existing)
-                {
-                    return (false, $"Type {req.Name} is value existing");
-                }
-
-                var OrderBy = await _context.TblMasterLookups.OrderByDescending(x => x.OrderBy).Select(x => x.OrderBy).FirstOrDefaultAsync();
+                var OrderBy = await _context.TblMasterLookups.Where(x => x.Type == req.Type).OrderByDescending(x => x.OrderBy).Select(x => x.OrderBy).FirstOrDefaultAsync();
+                var Value = await _context.TblMasterLookups.Where(x => x.Type == req.Type).OrderByDescending(x => x.Value).Select(x => x.Value).FirstOrDefaultAsync();
 
                 var TblLookup = new TblMasterLookup();
 
                 TblLookup.Type = req.Type;
                 TblLookup.Name = req.Name;
-                TblLookup.Value = req.Value;
+                TblLookup.Value = Value != null ? Value + 1 : 1;
                 TblLookup.OrderBy = OrderBy != null ?  OrderBy + 1 : 1;
                 TblLookup.CreatedById = _tokenManager.GetPrincipal().Result.data.Id;
                 TblLookup.CreatedAt = DateTime.Now;
@@ -89,7 +82,7 @@ namespace Api.Repositories
 
                 if (_ == null)
                 {
-                    return (false, "Id not found", new TblMasterLookup());
+                    return (false, "Data not found", new TblMasterLookup());
                 }
 
                 return (true, "", _);
@@ -155,7 +148,7 @@ namespace Api.Repositories
                 var data = await _context.TblMasterLookups.Where(x => x.Id == req.Id).FirstOrDefaultAsync();
                 if (data == null)
                 {
-                    return (false, "Id not found in database");
+                    return (false, "Data not found in database");
                 }
 
                 data.Type = req.Type;

@@ -11,6 +11,7 @@ using Microsoft.Net.Http.Headers;
 using System.Net.Http.Headers;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using Newtonsoft.Json;
 
 namespace Api.Controllers
 {
@@ -37,38 +38,54 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] RequestCreated req)
         {
-            var DecryptUID = await _tokenManager.GetPrincipal();
             var res = new ServiceResponseSingle<TblMasterNavigationAssignment>();
             var activity = new TblLogActivity();
+
+
+            //// Validate the request
+            //var validationResults = new List<ValidationResult>();
+            //var isValid = Validator.TryValidateObject(req, new ValidationContext(req), validationResults, true);
+            //if (!isValid)
+            //{
+            //    var errors = validationResults
+            //        .SelectMany(r => r.MemberNames.Select(m => new ValidationError { Type = m, Message = r.ErrorMessage }))
+            //        .ToArray();
+            //    activity.Message = JsonConvert.SerializeObject(errors);
+
+            //    return new BadRequestObjectResult(res);
+            //}
+
+            //execute request from client
+            var DecryptUID = await _tokenManager.GetPrincipal();
             try
             {
-                        if (DecryptUID.status == true)
-                        {
-                            
-                            var _ = await _executeRepo.CreateAsync(req);
+                if (DecryptUID.status == true)
+                {
 
-                            if (_.status == true)
-                            {
-                                res.Code = 201;
-                                res.Message = "Created successfully";
-                                activity.Status = "success";
-                                activity.Message = res.Message;
-                            }
-                            else
-                            {
-                                res.Code = 400;
-                                res.Message = _.error;
-                                activity.Status = "error";
-                                activity.Message = res.Message;
-                            }
-                        }
-                        else
-                        {
-                            res.Code = 400;
-                            res.Message = DecryptUID.error;
-                            activity.Status = "error";
-                            activity.Message = res.Message;
-                        }
+                    var _ = await _executeRepo.CreateAsync(req);
+
+                    if (_.status == true)
+                    {
+                        res.Code = 201;
+                        res.Message = "Created successfully";
+                        activity.Status = "success";
+                        activity.Message = res.Message;
+                    }
+                    else
+                    {
+                        res.Code = 400;
+                        res.Message = _.error;
+                        activity.Status = "error";
+                        activity.Message = res.Message;
+                    }
+                }
+                else
+                {
+                    res.Code = 400;
+                    res.Message = DecryptUID.error;
+                    activity.Status = "error";
+                    activity.Message = res.Message;
+                }
             }
             catch (Exception ex)
             {
@@ -93,9 +110,13 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<IActionResult> View([FromBody] Id_VM req)
         {
-            var DecryptUID = await _tokenManager.GetPrincipal();
             var res = new ServiceResponseSingle<TblMasterLookup>();
             var activity = new TblLogActivity();
+
+       
+
+
+            var DecryptUID = await _tokenManager.GetPrincipal();
             try
             {
                 if (DecryptUID.status == true)
